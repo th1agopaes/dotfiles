@@ -124,6 +124,7 @@ export TERM_PROGRAM="Windows Terminal"
 export EDITOR="code --wait"   # editor padrão (usado pelo git commit, por ex.)
 
 # --- PATH ---
+typeset -U path PATH
 export PATH="$HOME/.local/bin:$PATH"
 
 # --- Node (nvm) ---
