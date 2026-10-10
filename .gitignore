@@ -1,0 +1,6 @@
+# NUNCA versionar chaves, tokens ou credenciais
+.ssh/
+*.pem
+*.key
+.env
+hosts.yml
