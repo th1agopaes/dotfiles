@@ -1,3 +1,5 @@
+eval "$(keychain --eval --quiet id_ed25519)"
+fastfetch --file ~/.config/fastfetch/meu_desenho-mini.txt --logo-color-1 cyan
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -81,7 +83,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git ssh-agent zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 zstyle :omz:plugins:ssh-agent lazy yes
 source $ZSH/oh-my-zsh.sh
 
@@ -157,4 +159,5 @@ alias recarregar='source ~/.zshrc'
 
 # --- Visual ---
 alias waifu='fastfetch --file ~/.config/fastfetch/meu_desenho.txt --logo-color-1 cyan'
-fastfetch --file ~/.config/fastfetch/meu_desenho-mini.txt --logo-color-1 cyan
+# --- Navegação (zoxide) ---
+eval "$(zoxide init zsh)"

@@ -55,7 +55,7 @@
       }
     },
     {
-      "type": "disk",
+      "type": "disk", "showReadOnly": false,
       "key": "Disk",
       "percent": {
         "type": 3
