@@ -161,3 +161,11 @@ alias recarregar='source ~/.zshrc'
 alias waifu='fastfetch --file ~/.config/fastfetch/meu_desenho.txt --logo-color-1 cyan'
 # --- Navegação (zoxide) ---
 eval "$(zoxide init zsh)"
+
+cheat() {
+  if [[ -z "$1" ]]; then
+    echo "uso: cheat <comando>" >&2
+    return 1
+  fi
+  tldr "$1" 2>/dev/null || man "$1" 2>/dev/null || "$1" --help
+}
