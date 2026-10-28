@@ -25,3 +25,5 @@
 	gpgsign = true
 [gpg "ssh"]
 	allowedSignersFile = /home/kajik/.config/git/allowed_signers
+[help]
+	autocorrect = prompt
