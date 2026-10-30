@@ -128,9 +128,8 @@ export EDITOR="code --wait"   # editor padrão (usado pelo git commit, por ex.)
 typeset -U path PATH
 export PATH="$HOME/.local/bin:$PATH"
 
-# --- Node (nvm) ---
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+# --- mise (gerencia as versões de Node, Java, etc.) ---
+eval "$(~/.local/bin/mise activate zsh)"
 
 # --- fzf: Ctrl+R (histórico) | Ctrl+T (arquivos) | Alt+C (pastas) ---
 source <(fzf --zsh)
