@@ -151,7 +151,6 @@ alias bat='batcat'
 alias fd='fdfind'
 
 # --- Manutenção ---
-alias atualizar='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
 alias zshconfig='code ~/.zshrc'
 alias recarregar='source ~/.zshrc'
 
@@ -179,4 +178,11 @@ trazer() {
     return 1
   fi
   install -m 644 -t . -- "$@"
+}
+
+# Atualiza tudo: pacotes do Ubuntu, o próprio mise e as ferramentas dele
+atualizar() {
+  sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
+  mise self-update --yes
+  mise upgrade
 }
