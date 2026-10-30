@@ -121,7 +121,7 @@ source $ZSH/oh-my-zsh.sh
 # MINHAS CONFIGURAÇÕES (Haru)
 # ============================================================
 
-export TERM_PROGRAM="Windows Terminal"
+[[ -n $WT_SESSION ]] && export TERM_PROGRAM="Windows Terminal"
 export EDITOR="code --wait"   # editor padrão (usado pelo git commit, por ex.)
 
 # --- PATH ---
