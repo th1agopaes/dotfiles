@@ -116,12 +116,12 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] Listar os apps instalados no Windows e atualizá-los (`winget upgrade --all`)
 - [x] Limpar arquivos perdidos na home
 
-### ✅ Fase 1 · Fundação
+### Fase 1 · Fundação
 - [x] Estrutura de pastas em `~/dev` (`estudos/`, `faculdade/`, `projetos/`, `sandbox/`)
 - [x] Repositório de dotfiles com links simbólicos
 - [x] `.gitignore` protegendo credenciais
 - [x] `README` e `LICENSE`
-- [x] Auditar segredos e tornar o repositório público
+- [ ] Auditar segredos e tornar o repositório público
 
 ### Fase 2 · Segurança
 - [x] Gerenciador de senhas (Bitwarden)
