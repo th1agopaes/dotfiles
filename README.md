@@ -69,7 +69,8 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | **SSH** | `keychain` para carregar a chave SSH uma única vez por sessão |
 | **Visual** | `fastfetch` com arte ASCII personalizada ao abrir o terminal |
 | **Produtividade** | Funções `cheat` (consulta `tldr` → `man` → `--help`) e `trazer` (copia arquivos do Windows com permissão correta), além de aliases para pastas e tarefas comuns |
-| **Node.js** | Versões gerenciadas pelo `nvm` |
+| **Runtimes** | [mise](https://mise.jdx.dev/) gerencia as versões (Node.js 26 LTS); Python via `uv`; Rust via `rustup`; Java 25 (OpenJDK) e GCC pelo `apt` |
+| **Medição** | `hyperfine` para benchmarks confiáveis (abertura do Zsh: **~393 ms**) |
 | **Git** | Commits e tags assinados com chave SSH, autenticação via GitHub CLI, autocorreção com confirmação e `.gitignore` global para arquivos de editores |
 | **Editores** | VS Code com perfis por linguagem, tema Catppuccin Mocha e Settings Sync; IntelliJ IDEA e PyCharm gerenciados pelo JetBrains Toolbox com licença educacional |
 | **IA** | Instruções pessoais para o Claude Code (`CLAUDE.md`) |
@@ -81,7 +82,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 |---|---|
 | `ls`, `ll`, `la`, `lt` | Listagens com `eza` (simples, detalhada com Git, ocultos e árvore) |
 | `dev`, `est`, `proj`, `fac` | Vai direto para `~/dev`, estudos, projetos e o semestre atual |
-| `atualizar` | Atualiza e limpa os pacotes do Ubuntu |
+| `atualizar` | Atualiza tudo: pacotes do Ubuntu, o próprio mise e as ferramentas gerenciadas por ele |
 | `zshconfig` / `recarregar` | Abre o `.zshrc` no VS Code / recarrega as configurações |
 | `bat`, `fd` | Atalhos para `batcat` e `fdfind` (nomes dos pacotes no Ubuntu) |
 | `waifu` | Mostra o `fastfetch` com a arte ASCII grande |
@@ -128,6 +129,7 @@ dotfiles/
 ├── docs/                # Inventário e anotações das fases
 ├── fastfetch/           # Configuração e arte ASCII
 ├── git/                 # .gitconfig, allowed_signers e .gitignore_global
+├── mise/                # config.toml (versões globais: Node...)
 ├── scripts/             # exportar-windows.sh
 ├── vscode/              # settings.json do VS Code
 ├── windows/             # Windows Terminal e perfil do PowerShell
@@ -144,7 +146,7 @@ Os arquivos ficam no repositório e o sistema acessa cada um por **link simbóli
 
 ```bash
 sudo apt update
-sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetch
+sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetch hyperfine podman build-essential openjdk-25-jdk
 ```
 
 **2. Instalações manuais** (seguir a documentação oficial de cada um)
@@ -155,7 +157,9 @@ sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetc
 | Powerlevel10k | [github.com/romkatv/powerlevel10k#oh-my-zsh](https://github.com/romkatv/powerlevel10k#oh-my-zsh) |
 | zsh-autosuggestions | [Instalação com Oh My Zsh](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md#oh-my-zsh) |
 | zsh-syntax-highlighting | [Instalação com Oh My Zsh](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md#oh-my-zsh) |
-| nvm | [github.com/nvm-sh/nvm#installing-and-updating](https://github.com/nvm-sh/nvm#installing-and-updating) |
+| mise | `curl -fsSL https://mise.run \| sh` ([guia](https://mise.jdx.dev/getting-started)) |
+| uv | [docs.astral.sh/uv/getting-started/installation](https://docs.astral.sh/uv/getting-started/installation/) |
+| Rust | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh -s -- --no-modify-path` ([guia](https://rust-lang.org/tools/install)) |
 | Chave SSH no GitHub | [docs.github.com/pt/authentication/connecting-to-github-with-ssh](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh) |
 
 **3. Clonar e criar os links simbólicos**
@@ -163,7 +167,7 @@ sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetc
 ```bash
 git clone git@github.com:th1agopaes/dotfiles.git ~/dev/dotfiles
 
-mkdir -p ~/.config/git ~/.claude
+mkdir -p ~/.config/git ~/.config/mise ~/.claude
 ln -sf  ~/dev/dotfiles/zsh/.zshrc           ~/.zshrc
 ln -sf  ~/dev/dotfiles/zsh/.p10k.zsh        ~/.p10k.zsh
 ln -sf  ~/dev/dotfiles/git/.gitconfig       ~/.gitconfig
@@ -171,8 +175,10 @@ ln -sf  ~/dev/dotfiles/git/allowed_signers  ~/.config/git/allowed_signers
 ln -sf  ~/dev/dotfiles/git/.gitignore_global ~/.gitignore_global
 ln -sfn ~/dev/dotfiles/fastfetch            ~/.config/fastfetch
 ln -sf  ~/dev/dotfiles/claude/CLAUDE.md     ~/.claude/CLAUDE.md
+ln -sf  ~/dev/dotfiles/mise/config.toml     ~/.config/mise/config.toml
 
 chsh -s "$(which zsh)"   # define o Zsh como shell padrão
+mise install             # instala as versões listadas no config.toml (ex.: Node 26)
 ```
 
 > ⚠️ O `ln -sf` **substitui** arquivos existentes. Em uma máquina nova, faça backup antes. Se `~/.config/fastfetch` já existir como pasta comum, mova-a para outro lugar antes de criar o link.
@@ -299,11 +305,13 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] Faxina: extensão Docker duplicada, diretórios antigos da JetBrains e `.idea` perdido
 - [x] `.gitignore` global para arquivos pessoais de editores
 
-### Fase 5 · Stack de mercado
-- [ ] Definir 1–2 ferramentas por área (tabela abaixo)
-- [ ] Instalar e testar cada uma
-- [ ] Registrar documentação oficial
-- [ ] Trocar o `nvm` por um gerenciador de versões mais rápido (medido: o `nvm` ocupa ~0,40 s dos 0,63 s de abertura do Zsh)
+### ✅ Fase 5 · Stack de mercado
+- [x] Definir 1–2 ferramentas por área com base em dados ([Stack Overflow Survey 2026](https://survey.stackoverflow.co/2026/technology) e [GitHub Octoverse 2025](https://github.blog/news-insights/octoverse/))
+- [x] Trocar o `nvm` pelo `mise` com Node.js 26 LTS (abertura do Zsh medida com `hyperfine`: ~393 ms)
+- [x] Instalar Rust via `rustup` (sem alterar arquivos de configuração automaticamente)
+- [x] Testar PostgreSQL 18 em container com Podman
+- [x] `atualizar` passa a atualizar também o mise e suas ferramentas
+- [x] Registrar documentação e tutorial oficial de cada ferramenta (tabela abaixo)
 
 ### Fase 6 · Manutenção
 - [ ] Rotina mensal de atualização e limpeza
@@ -314,20 +322,41 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 
 ## 🧰 Stack por área
 
-> 🚧 Será preenchida na **Fase 5**.
+Escolhas baseadas em dados de mercado ([Stack Overflow Survey 2026](https://survey.stackoverflow.co/2026/technology), [GitHub Octoverse 2025](https://github.blog/news-insights/octoverse/)), com no máximo duas ferramentas por área.
 
-| Área | Ferramenta(s) | Documentação |
-|---|---|---|
-| Linguagens | — | — |
-| Front-end | — | — |
-| Back-end | — | — |
-| Banco de dados | — | — |
-| Containers | — | — |
-| CI/CD | — | — |
-| Cloud | — | — |
-| IA / Dados | — | — |
-| Testes | — | — |
-| Desenvolvimento de jogos | — | — |
+**Regra de instalação:** no sistema, só gerenciadores e runtimes; bibliotecas e frameworks entram **em cada projeto** (com arquivo de *lock*); bancos de dados rodam **em containers**.
+
+| Legenda | Significado |
+|---|---|
+| ✅ | Instalado no sistema |
+| 📦 | Instalado por projeto (`npm`, `uv`, `cargo`, Maven/Gradle) |
+| 🐳 | Executado em container (Podman) |
+| 🔜 | Instalar quando for usar |
+
+| Área | Ferramenta | | Documentação | Tutorial oficial |
+|---|---|:-:|---|---|
+| Versões | mise | ✅ | [mise.jdx.dev](https://mise.jdx.dev/) | [Getting Started](https://mise.jdx.dev/getting-started) |
+| Linguagens | TypeScript | 📦 | [typescriptlang.org/docs](https://www.typescriptlang.org/docs/) | [TS em 5 minutos](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html) |
+| Linguagens | Python + uv | ✅ | [docs.python.org/pt-br](https://docs.python.org/pt-br/3/) · [uv](https://docs.astral.sh/uv/) | [Tutorial Python](https://docs.python.org/pt-br/3/tutorial/) |
+| Linguagens | Rust | ✅ | [rust-lang.org/learn](https://rust-lang.org/learn) | [The Rust Book](https://doc.rust-lang.org/book/) |
+| Front-end | React | 📦 | [pt-br.react.dev](https://pt-br.react.dev/reference/react) | [Início rápido](https://pt-br.react.dev/learn) |
+| Front-end | Vite | 📦 | [vite.dev](https://vite.dev/) | [Guia](https://vite.dev/guide/) |
+| Back-end | Node.js + Express | ✅ 📦 | [nodejs.org/docs](https://nodejs.org/docs/latest/api/) · [expressjs.com/pt-br](https://expressjs.com/pt-br/) | [Learn Node.js](https://nodejs.org/en/learn) |
+| Back-end | Spring Boot | 📦 | [docs.spring.io/spring-boot](https://docs.spring.io/spring-boot/) | [Spring Guides](https://spring.io/guides) |
+| Banco de dados | PostgreSQL 18 | 🐳 | [postgresql.org/docs](https://www.postgresql.org/docs/) | [Tutorial oficial](https://www.postgresql.org/docs/current/tutorial.html) |
+| Banco de dados | Redis | 🐳 | [redis.io/docs](https://redis.io/docs/) | [Redis Learn](https://redis.io/learn/) |
+| Containers | Podman + Compose | ✅ | [docs.podman.io](https://docs.podman.io/) | [Tutoriais Podman](https://docs.podman.io/en/latest/Tutorials.html) |
+| CI/CD | GitHub Actions | — | [docs.github.com/pt/actions](https://docs.github.com/pt/actions) | [GitHub Skills](https://skills.github.com/) |
+| Cloud | AWS | 🔜 | [docs.aws.amazon.com](https://docs.aws.amazon.com/) | [Getting Started](https://aws.amazon.com/pt/getting-started/) |
+| Cloud | Azure (créditos de estudante) | 🔜 | [learn.microsoft.com/pt-br/azure](https://learn.microsoft.com/pt-br/azure/) | [Azure for Students](https://azure.microsoft.com/pt-br/free/students) |
+| IA / Dados | Jupyter + pandas | 📦 | [docs.jupyter.org](https://docs.jupyter.org/) · [pandas](https://pandas.pydata.org/docs/) | [Tutoriais pandas](https://pandas.pydata.org/docs/getting_started/intro_tutorials/) |
+| IA / Dados | SDKs de LLM (Claude API) | 📦 | [docs.claude.com](https://docs.claude.com/) | [Anthropic Courses](https://github.com/anthropics/courses) |
+| Testes | pytest (+ JUnit no Java) | 📦 | [docs.pytest.org](https://docs.pytest.org/) · [junit.org](https://junit.org/) | [Get Started](https://docs.pytest.org/en/stable/getting-started.html) |
+| Testes | Vitest | 📦 | [vitest.dev](https://vitest.dev/) | [Guia](https://vitest.dev/guide/) |
+| Jogos | Godot (GDScript/C#) | 🔜 | [docs.godotengine.org](https://docs.godotengine.org/pt-br/stable/) | [Primeiro jogo 2D](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/) |
+| Jogos | Unity | 🔜 | [docs.unity3d.com](https://docs.unity3d.com/) | [Unity Learn](https://learn.unity.com/) |
+
+> ℹ️ O Podman exibe o aviso `"/" is not a shared mount` em containers *rootless* no WSL. Até agora não causou problemas (PostgreSQL testado com sucesso); fica registrado para investigar se algum volume não montar.
 
 ---
 
@@ -358,7 +387,10 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 | fd | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
 | tldr | [tldr.sh](https://tldr.sh/) |
 | keychain | [github.com/danielrobbins/keychain](https://github.com/danielrobbins/keychain) |
-| nvm | [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm) |
+| mise | [mise.jdx.dev](https://mise.jdx.dev/) |
+| rustup | [rust-lang.github.io/rustup](https://rust-lang.github.io/rustup/) |
+| hyperfine | [github.com/sharkdp/hyperfine](https://github.com/sharkdp/hyperfine) |
+| Node.js (calendário de versões) | [nodejs.org/about/previous-releases](https://nodejs.org/en/about/previous-releases) |
 | fastfetch | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | VS Code | [code.visualstudio.com/docs](https://code.visualstudio.com/docs) |
 | Perfis do VS Code | [code.visualstudio.com/docs/configure/profiles](https://code.visualstudio.com/docs/configure/profiles) |
