@@ -32,6 +32,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 - [O que está configurado](#-o-que-está-configurado)
 - [Estrutura do repositório](#-estrutura-do-repositório)
 - [Instalação](#-instalação)
+- [Backup e restauração](#-backup-e-restauração)
 - [Roadmap de configuração](#-roadmap-de-configuração)
 - [Stack por área](#-stack-por-área)
 - [Documentação oficial](#-documentação-oficial)
@@ -144,6 +145,58 @@ chsh -s "$(which zsh)"   # define o Zsh como shell padrão
 
 ---
 
+## 💾 Backup e restauração
+
+Seguindo a **regra 3-2-1** (3 cópias, 2 mídias, 1 fora de casa):
+
+| Cópia | Onde | Conteúdo |
+|---|---|---|
+| 1 | SSD | Sistema em uso |
+| 2 | SSD (`C:\backup\wsl`) | Ubuntu exportado e criptografado (`.7z`) |
+| 3 | Google Drive | Mesmo `.7z`, fora de casa |
+| — | GitHub | Todos os projetos de código |
+
+> 🔐 O backup contém a chave SSH privada, por isso é sempre criptografado (AES-256) com senha guardada no Bitwarden.
+
+<details>
+<summary><b>📤 Fazer backup</b> (PowerShell, mensal)</summary>
+
+```powershell
+wsl --shutdown
+$data = Get-Date -Format yyyy-MM-dd
+$7z = "C:\Program Files\7-Zip\7z.exe"
+
+wsl --export Ubuntu "C:\backup\wsl\ubuntu-$data.tar"
+& $7z a -t7z -mx=1 -mhe=on -p "C:\backup\wsl\ubuntu-$data.7z" "C:\backup\wsl\ubuntu-$data.tar"
+& $7z t "C:\backup\wsl\ubuntu-$data.7z"       # testar: deve terminar em "Everything is Ok"
+
+Copy-Item "C:\backup\wsl\ubuntu-$data.7z" "G:\Meu Drive\Backups\"
+Remove-Item "C:\backup\wsl\ubuntu-$data.tar"  # o .tar não é criptografado
+```
+
+> ℹ️ O aviso `pax format cannot archive sockets` é normal: sockets são arquivos temporários de programas em execução e não precisam de backup.
+
+</details>
+
+<details>
+<summary><b>📥 Restaurar</b> (PowerShell)</summary>
+
+```powershell
+$7z = "C:\Program Files\7-Zip\7z.exe"
+& $7z x "C:\backup\wsl\ubuntu-AAAA-MM-DD.7z" -o"C:\backup\wsl"
+
+# Importa como uma distro nova (não mexe na atual)
+wsl --import Ubuntu-Restaurado "C:\WSL\Ubuntu-Restaurado" "C:\backup\wsl\ubuntu-AAAA-MM-DD.tar"
+wsl -d Ubuntu-Restaurado
+```
+
+> O usuário padrão (`kajik`) volta automaticamente, pois está definido no `/etc/wsl.conf` dentro do backup.
+> Documentação: [Importar e exportar distribuições](https://learn.microsoft.com/pt-br/windows/wsl/basic-commands#import-and-export-a-distribution)
+
+</details>
+
+---
+
 ## 🗺️ Roadmap de configuração
 
 Cada fase só é marcada como concluída quando todos os itens dela estiverem feitos.
@@ -160,14 +213,14 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] `README` e `LICENSE`
 - [x] Auditar segredos e tornar o repositório público
 
-### Fase 2 · Segurança
+### ✅ Fase 2 · Segurança
 - [x] Gerenciador de senhas (Bitwarden)
-- [ ] 2FA nas contas principais
+- [x] 2FA nas contas principais
 - [x] Chave SSH configurada no GitHub
 - [x] Commits assinados (selo *Verified*)
 - [x] Atualizações automáticas (Windows Update e `unattended-upgrades` no Ubuntu)
 - [x] Remover restos do Docker Desktop (grupo `docker`, `/Docker`, `~/.docker`)
-- [ ] Rotina de backup (regra 3-2-1)
+- [x] Backup criptografado do WSL (SSD + Google Drive) com restauração documentada
 
 ### Fase 3 · Terminal
 - [ ] Windows Terminal configurado (pasta inicial, perfil padrão, fonte, tema)
@@ -188,6 +241,8 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 
 ### Fase 6 · Manutenção
 - [ ] Rotina mensal de atualização e limpeza
+- [ ] Backup mensal do WSL
+- [ ] Cópia extra do backup em pendrive
 
 ---
 
@@ -239,6 +294,10 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 | VS Code | [code.visualstudio.com/docs](https://code.visualstudio.com/docs) |
 | JetBrains Toolbox | [jetbrains.com/toolbox-app](https://www.jetbrains.com/toolbox-app/) |
 | Podman | [docs.podman.io](https://docs.podman.io/) |
+| Comandos do WSL (export/import) | [learn.microsoft.com/pt-br/windows/wsl/basic-commands](https://learn.microsoft.com/pt-br/windows/wsl/basic-commands) |
+| Gitleaks | [github.com/gitleaks/gitleaks](https://github.com/gitleaks/gitleaks) |
+| Bitwarden | [bitwarden.com/help](https://bitwarden.com/help/) |
+| 7-Zip | [7-zip.org](https://www.7-zip.org/) |
 | Claude Code | [docs.claude.com](https://docs.claude.com/en/docs/claude-code/overview) |
 
 ---
@@ -267,6 +326,7 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 - ❌ **Nunca** versionar senhas, tokens, chaves privadas (`id_ed25519`) ou arquivos `.env`
 - ✅ Dados sensíveis ficam em arquivos locais listados no `.gitignore`
 - ✅ Revisar o `git diff --staged` antes de cada commit
+- ✅ Auditoria de segredos com [Gitleaks](https://github.com/gitleaks/gitleaks) antes de tornar um repositório público
 
 ---
 
