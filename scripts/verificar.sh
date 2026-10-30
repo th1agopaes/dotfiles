@@ -53,7 +53,7 @@ secao "Ferramentas"
 checar_cmd() {
   local cmd="$1" versao
   if command -v "$cmd" >/dev/null 2>&1; then
-    versao="$("$cmd" --version 2>&1 | head -1)"
+    versao="$("$cmd" --version 2>&1 | grep -m1 .)"
     ok "$cmd · ${versao:0:60}"
   else
     erro "$cmd não encontrado"
@@ -139,7 +139,7 @@ verificar_backup "/mnt/c/backup/wsl" "SSD"
 if [[ -d "/mnt/g" ]]; then
   verificar_backup "/mnt/g/Meu Drive/Backups" "Google Drive"
 else
-  aviso "Google Drive (G:) não está montado no WSL: confira a pasta Backups pelo Windows"
+  echo "  ℹ Google Drive (G:) não fica visível no WSL; o Backup-Wsl confirma a cópia ao terminar"
 fi
 
 # ---------- Resumo ----------
