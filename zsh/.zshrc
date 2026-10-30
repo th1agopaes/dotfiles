@@ -127,6 +127,7 @@ export EDITOR="code --wait"   # editor padrão (usado pelo git commit, por ex.)
 # --- PATH ---
 typeset -U path PATH
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 # --- mise (gerencia as versões de Node, Java, etc.) ---
 eval "$(~/.local/bin/mise activate zsh)"
