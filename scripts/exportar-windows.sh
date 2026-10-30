@@ -39,5 +39,4 @@ exportar "$WIN_HOME/AppData/Roaming/Code/User/settings.json" \
          "vscode/settings.json"
 
 echo
-git -C "$REPO" status --short -- windows/
 git -C "$REPO" status --short -- windows/ vscode/
