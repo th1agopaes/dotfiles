@@ -70,7 +70,8 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | **Visual** | `fastfetch` com arte ASCII personalizada ao abrir o terminal |
 | **Produtividade** | Funções `cheat` (consulta `tldr` → `man` → `--help`) e `trazer` (copia arquivos do Windows com permissão correta), além de aliases para pastas e tarefas comuns |
 | **Node.js** | Versões gerenciadas pelo `nvm` |
-| **Git** | Commits e tags assinados com chave SSH, autenticação via GitHub CLI, autocorreção com confirmação |
+| **Git** | Commits e tags assinados com chave SSH, autenticação via GitHub CLI, autocorreção com confirmação e `.gitignore` global para arquivos de editores |
+| **Editores** | VS Code com perfis por linguagem, tema Catppuccin Mocha e Settings Sync; IntelliJ IDEA e PyCharm gerenciados pelo JetBrains Toolbox com licença educacional |
 | **IA** | Instruções pessoais para o Claude Code (`CLAUDE.md`) |
 
 <details>
@@ -90,6 +91,30 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 
 </details>
 
+<details>
+<summary><b>🧩 Editores: quem faz o quê</b></summary>
+
+| Editor | Uso |
+|---|---|
+| **VS Code** | Web (JS/React/Node), C, scripts e configurações |
+| **IntelliJ IDEA** | Java |
+| **PyCharm** | Python e Django |
+
+**Perfis do VS Code** (cada pasta de projeto fica associada ao seu perfil):
+
+| Perfil | Extensões próprias | Pastas |
+|---|---|---|
+| Padrão | Só a base | `~/dev`, dotfiles, scripts |
+| Web | ESLint | `estudos/web`, `columbinamath` |
+| C | C/C++ | Exercícios de C |
+| Python | Python, Pylance, Ruff, Jupyter, Django, SQLite Viewer | `estudos/ia-python`, `columbinamath-django` |
+
+**Base (todos os perfis):** Claude Code, WSL, Português (Brasil), vscode-icons, Catppuccin, Error Lens, EditorConfig, GitLens, Prettier, Container Tools e Discord Presence.
+
+> Configurações, atalhos e snippets são compartilhados (vêm do perfil Padrão); cada perfil muda apenas as extensões.
+
+</details>
+
 ---
 
 ## 🗂️ Estrutura do repositório
@@ -102,13 +127,12 @@ dotfiles/
 ├── claude/              # CLAUDE.md (instruções do Claude Code)
 ├── docs/                # Inventário e anotações das fases
 ├── fastfetch/           # Configuração e arte ASCII
-├── git/                 # .gitconfig e allowed_signers
+├── git/                 # .gitconfig, allowed_signers e .gitignore_global
 ├── scripts/             # exportar-windows.sh
+├── vscode/              # settings.json do VS Code
 ├── windows/             # Windows Terminal e perfil do PowerShell
 └── zsh/                 # .zshrc e .p10k.zsh
 ```
-
-> 🚧 **Planejado:** `vscode/` (configurações e extensões).
 
 ---
 
@@ -144,6 +168,7 @@ ln -sf  ~/dev/dotfiles/zsh/.zshrc           ~/.zshrc
 ln -sf  ~/dev/dotfiles/zsh/.p10k.zsh        ~/.p10k.zsh
 ln -sf  ~/dev/dotfiles/git/.gitconfig       ~/.gitconfig
 ln -sf  ~/dev/dotfiles/git/allowed_signers  ~/.config/git/allowed_signers
+ln -sf  ~/dev/dotfiles/git/.gitignore_global ~/.gitignore_global
 ln -sfn ~/dev/dotfiles/fastfetch            ~/.config/fastfetch
 ln -sf  ~/dev/dotfiles/claude/CLAUDE.md     ~/.claude/CLAUDE.md
 
@@ -168,6 +193,13 @@ cp ~/dev/dotfiles/windows/powershell/Microsoft.PowerShell_profile.ps1 "$PS_DIR/"
 > 🛡️ Se a **proteção contra ransomware** (Acesso controlado a pastas) bloquear o perfil do PowerShell, libere o `pwsh.exe` em *Segurança do Windows → Proteção contra ransomware*, sem desativar a proteção.
 
 > 🔄 **Manutenção:** essas configurações vivem no Windows (os apps as reescrevem). Depois de mudar algo, rode `./scripts/exportar-windows.sh`, revise com `git diff` e faça o commit.
+
+**5. Editores**
+
+| Editor | Como restaurar |
+|---|---|
+| VS Code | Entrar com o GitHub em **Fazer Backup e Sincronizar Configurações** (com **Perfis** marcado): tema, configurações, perfis e extensões voltam sozinhos. Cópia versionada em `vscode/settings.json` |
+| JetBrains | Instalar o [Toolbox](https://www.jetbrains.com/toolbox-app/), entrar com a conta da [licença educacional](https://www.jetbrains.com/community/education/#students) e instalar as IDEs por ele |
 
 ---
 
@@ -258,10 +290,14 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 
 > ⚖️ **Decisão:** o WSL foi mantido com as permissões padrão em `/mnt/c`. Forçar `644` via `fmask` no `wsl.conf` tiraria a permissão de execução dos `.exe` do Windows, quebrando comandos como `code` e `explorer.exe` dentro do Ubuntu.
 
-### Fase 4 · Editores
-- [ ] VS Code com perfis por linguagem
-- [ ] IDEs JetBrains (IntelliJ, PyCharm) gerenciadas pelo Toolbox
-- [ ] Sincronização de configurações
+### ✅ Fase 4 · Editores
+- [x] VS Code com perfis por linguagem (Web, C, Python) e extensões base compartilhadas
+- [x] Tema Catppuccin Mocha no VS Code, igual ao terminal
+- [x] Formatadores por linguagem (Prettier, Ruff, C/C++) com formatação ao salvar
+- [x] Settings Sync do VS Code com perfis (conta GitHub) + `settings.json` versionado
+- [x] IDEs JetBrains (IntelliJ, PyCharm) gerenciadas pelo Toolbox, com licença educacional
+- [x] Faxina: extensão Docker duplicada, diretórios antigos da JetBrains e `.idea` perdido
+- [x] `.gitignore` global para arquivos pessoais de editores
 
 ### Fase 5 · Stack de mercado
 - [ ] Definir 1–2 ferramentas por área (tabela abaixo)
@@ -325,7 +361,13 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 | nvm | [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm) |
 | fastfetch | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | VS Code | [code.visualstudio.com/docs](https://code.visualstudio.com/docs) |
+| Perfis do VS Code | [code.visualstudio.com/docs/configure/profiles](https://code.visualstudio.com/docs/configure/profiles) |
+| VS Code com WSL | [code.visualstudio.com/docs/remote/wsl](https://code.visualstudio.com/docs/remote/wsl) |
+| Catppuccin (VS Code) | [github.com/catppuccin/vscode](https://github.com/catppuccin/vscode) |
 | JetBrains Toolbox | [jetbrains.com/toolbox-app](https://www.jetbrains.com/toolbox-app/) |
+| Licença educacional JetBrains | [jetbrains.com/community/education](https://www.jetbrains.com/community/education/#students) |
+| Prettier | [prettier.io/docs](https://prettier.io/docs/) |
+| Ruff | [docs.astral.sh/ruff](https://docs.astral.sh/ruff/) |
 | Podman | [docs.podman.io](https://docs.podman.io/) |
 | Comandos do WSL (export/import) | [learn.microsoft.com/pt-br/windows/wsl/basic-commands](https://learn.microsoft.com/pt-br/windows/wsl/basic-commands) |
 | Gitleaks | [github.com/gitleaks/gitleaks](https://github.com/gitleaks/gitleaks) |
