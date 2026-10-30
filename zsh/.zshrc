@@ -181,9 +181,23 @@ trazer() {
   install -m 644 -t . -- "$@"
 }
 
-# Atualiza tudo: pacotes do Ubuntu, o próprio mise e as ferramentas dele
+# Atualiza tudo no Ubuntu: apt, mise, Rust, uv e plugins/tema do Zsh
 atualizar() {
+  print -P "%F{cyan}==> Ubuntu (apt)%f"
   sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
-  mise self-update --yes
-  mise upgrade
+
+  print -P "%F{cyan}==> mise e ferramentas%f"
+  mise self-update --yes && mise upgrade
+
+  print -P "%F{cyan}==> Rust%f"
+  rustup update
+
+  print -P "%F{cyan}==> uv%f"
+  uv self update
+
+  print -P "%F{cyan}==> Plugins e tema do Zsh%f"
+  local repo
+  for repo in ${ZSH_CUSTOM:-$ZSH/custom}/{plugins,themes}/*/.git(N:h); do
+    git -C "$repo" pull --quiet --ff-only && print "  ✔ ${repo:t}"
+  done
 }
