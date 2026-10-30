@@ -4,3 +4,8 @@
 *.key
 .env
 hosts.yml
+
+# Backups e arquivos locais
+*.backup
+*.bak
+*.local
