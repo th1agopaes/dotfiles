@@ -59,12 +59,28 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | Área | Destaques |
 |---|---|
 | **Shell** | Zsh com Oh My Zsh, tema Powerlevel10k e plugins `git`, `zsh-autosuggestions` e `zsh-syntax-highlighting` |
-| **Navegação** | `eza` no lugar do `ls` (ícones e cores) e `zoxide` para pular entre pastas por frequência de uso |
+| **Navegação** | `eza` no lugar do `ls` (ícones e cores), `zoxide` para pular entre pastas por frequência de uso e `fzf` para busca interativa |
+| **Arquivos** | `bat` (`cat` com cores) e `fd` (`find` mais rápido e simples) |
 | **SSH** | `keychain` para carregar a chave SSH uma única vez por sessão |
 | **Visual** | `fastfetch` com arte ASCII personalizada ao abrir o terminal |
-| **Produtividade** | Função `cheat` para consultar exemplos rápidos de comandos |
+| **Produtividade** | Função `cheat` (consulta `tldr` → `man` → `--help`) e aliases para pastas e tarefas comuns |
+| **Node.js** | Versões gerenciadas pelo `nvm` |
 | **Git** | Commits e tags assinados com chave SSH, autenticação via GitHub CLI, autocorreção com confirmação |
 | **IA** | Instruções pessoais para o Claude Code (`CLAUDE.md`) |
+
+<details>
+<summary><b>⌨️ Aliases</b></summary>
+
+| Alias | O que faz |
+|---|---|
+| `ls`, `ll`, `la`, `lt` | Listagens com `eza` (simples, detalhada com Git, ocultos e árvore) |
+| `dev`, `est`, `proj`, `fac` | Vai direto para `~/dev`, estudos, projetos e o semestre atual |
+| `atualizar` | Atualiza e limpa os pacotes do Ubuntu |
+| `zshconfig` / `recarregar` | Abre o `.zshrc` no VS Code / recarrega as configurações |
+| `bat`, `fd` | Atalhos para `batcat` e `fdfind` (nomes dos pacotes no Ubuntu) |
+| `waifu` | Mostra o `fastfetch` com a arte ASCII grande |
+
+</details>
 
 ---
 
@@ -78,7 +94,7 @@ dotfiles/
 ├── claude/              # CLAUDE.md (instruções do Claude Code)
 ├── docs/                # Inventário e anotações das fases
 ├── fastfetch/           # Configuração e arte ASCII
-├── git/                 # .gitconfig
+├── git/                 # .gitconfig e allowed_signers
 └── zsh/                 # .zshrc e .p10k.zsh
 ```
 
@@ -90,20 +106,41 @@ dotfiles/
 
 Os arquivos ficam no repositório e o sistema acessa cada um por **link simbólico** (um "atalho" que aponta para o arquivo real).
 
-```bash
-# 1. Clonar o repositório
-git clone git@github.com:th1agopaes/dotfiles.git ~/dev/dotfiles
+**1. Pacotes do Ubuntu**
 
-# 2. Criar os links simbólicos
-ln -sf ~/dev/dotfiles/zsh/.zshrc       ~/.zshrc
-ln -sf ~/dev/dotfiles/zsh/.p10k.zsh    ~/.p10k.zsh
-ln -sf ~/dev/dotfiles/git/.gitconfig   ~/.gitconfig
-mkdir -p ~/.config/fastfetch ~/.claude
-ln -sf ~/dev/dotfiles/fastfetch/config.jsonc ~/.config/fastfetch/config.jsonc
-ln -sf ~/dev/dotfiles/claude/CLAUDE.md       ~/.claude/CLAUDE.md
+```bash
+sudo apt update
+sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetch
 ```
 
-> ⚠️ O `ln -sf` **substitui** arquivos existentes. Faça backup antes em uma máquina nova.
+**2. Instalações manuais** (seguir a documentação oficial de cada um)
+
+| Ferramenta | Instalação |
+|---|---|
+| Oh My Zsh | [ohmyz.sh/#install](https://ohmyz.sh/#install) |
+| Powerlevel10k | [github.com/romkatv/powerlevel10k#oh-my-zsh](https://github.com/romkatv/powerlevel10k#oh-my-zsh) |
+| zsh-autosuggestions | [Instalação com Oh My Zsh](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md#oh-my-zsh) |
+| zsh-syntax-highlighting | [Instalação com Oh My Zsh](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md#oh-my-zsh) |
+| nvm | [github.com/nvm-sh/nvm#installing-and-updating](https://github.com/nvm-sh/nvm#installing-and-updating) |
+| Chave SSH no GitHub | [docs.github.com/pt/authentication/connecting-to-github-with-ssh](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh) |
+
+**3. Clonar e criar os links simbólicos**
+
+```bash
+git clone git@github.com:th1agopaes/dotfiles.git ~/dev/dotfiles
+
+mkdir -p ~/.config/git ~/.claude
+ln -sf  ~/dev/dotfiles/zsh/.zshrc           ~/.zshrc
+ln -sf  ~/dev/dotfiles/zsh/.p10k.zsh        ~/.p10k.zsh
+ln -sf  ~/dev/dotfiles/git/.gitconfig       ~/.gitconfig
+ln -sf  ~/dev/dotfiles/git/allowed_signers  ~/.config/git/allowed_signers
+ln -sfn ~/dev/dotfiles/fastfetch            ~/.config/fastfetch
+ln -sf  ~/dev/dotfiles/claude/CLAUDE.md     ~/.claude/CLAUDE.md
+
+chsh -s "$(which zsh)"   # define o Zsh como shell padrão
+```
+
+> ⚠️ O `ln -sf` **substitui** arquivos existentes. Em uma máquina nova, faça backup antes. Se `~/.config/fastfetch` já existir como pasta comum, mova-a para outro lugar antes de criar o link.
 
 ---
 
@@ -116,25 +153,28 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] Listar os apps instalados no Windows e atualizá-los (`winget upgrade --all`)
 - [x] Limpar arquivos perdidos na home
 
-### Fase 1 · Fundação
+### ✅ Fase 1 · Fundação
 - [x] Estrutura de pastas em `~/dev` (`estudos/`, `faculdade/`, `projetos/`, `sandbox/`)
 - [x] Repositório de dotfiles com links simbólicos
 - [x] `.gitignore` protegendo credenciais
 - [x] `README` e `LICENSE`
-- [ ] Auditar segredos e tornar o repositório público
+- [x] Auditar segredos e tornar o repositório público
 
 ### Fase 2 · Segurança
 - [x] Gerenciador de senhas (Bitwarden)
 - [ ] 2FA nas contas principais
 - [x] Chave SSH configurada no GitHub
 - [x] Commits assinados (selo *Verified*)
-- [ ] Atualizações automáticas (Windows e Ubuntu)
+- [x] Atualizações automáticas (Windows Update e `unattended-upgrades` no Ubuntu)
+- [x] Remover restos do Docker Desktop (grupo `docker`, `/Docker`, `~/.docker`)
 - [ ] Rotina de backup (regra 3-2-1)
 
 ### Fase 3 · Terminal
-- [ ] Windows Terminal configurado (perfil padrão, fonte, tema)
+- [ ] Windows Terminal configurado (pasta inicial, perfil padrão, fonte, tema)
+- [ ] PowerShell 7 com UTF-8 (acentos corretos)
+- [ ] WSL com permissões corretas em `/mnt/c` (`metadata` no `wsl.conf`)
 - [ ] Revisar `.zshrc` e tema do prompt
-- [x] Ferramentas modernas: `eza`, `zoxide`, `fastfetch`, `keychain`
+- [x] Ferramentas modernas: `eza`, `zoxide`, `fzf`, `bat`, `fd`, `fastfetch`, `keychain`
 
 ### Fase 4 · Editores
 - [ ] VS Code com perfis por linguagem
@@ -189,6 +229,12 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 | zsh-syntax-highlighting | [github.com/zsh-users/zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) |
 | eza | [github.com/eza-community/eza](https://github.com/eza-community/eza) |
 | zoxide | [github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide) |
+| fzf | [github.com/junegunn/fzf](https://github.com/junegunn/fzf) |
+| bat | [github.com/sharkdp/bat](https://github.com/sharkdp/bat) |
+| fd | [github.com/sharkdp/fd](https://github.com/sharkdp/fd) |
+| tldr | [tldr.sh](https://tldr.sh/) |
+| keychain | [github.com/danielrobbins/keychain](https://github.com/danielrobbins/keychain) |
+| nvm | [github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm) |
 | fastfetch | [github.com/fastfetch-cli/fastfetch](https://github.com/fastfetch-cli/fastfetch) |
 | VS Code | [code.visualstudio.com/docs](https://code.visualstudio.com/docs) |
 | JetBrains Toolbox | [jetbrains.com/toolbox-app](https://www.jetbrains.com/toolbox-app/) |
