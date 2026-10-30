@@ -17,7 +17,7 @@
 
 ## Ambiente
 - Ubuntu 26.04 no WSL2, shell zsh. Projetos ficam em ~/dev.
-- Node via nvm | Python via uv (nunca pip global) | Java 25 (OpenJDK) | gcc 15.
+- Node via mise | Python via uv (nunca pip global) | Java 25 (OpenJDK) | gcc 15.
 - Compilar C com: gcc -std=c11 -Wall -Wextra.
 
 ## Git
