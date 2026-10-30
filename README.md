@@ -9,7 +9,7 @@
 ![Zsh](https://img.shields.io/badge/Shell-Zsh_5.9-F15A24?style=for-the-badge&logo=zsh&logoColor=white)
 ![PowerShell](https://img.shields.io/badge/PowerShell-7-5391FE?style=for-the-badge)
 ![Git](https://img.shields.io/badge/Commits-Assinados_✔-F05032?style=for-the-badge&logo=git&logoColor=white)
-![Status](https://img.shields.io/badge/status-em_evolução-yellow?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-ativo-brightgreen?style=for-the-badge)
 
 </div>
 
@@ -34,6 +34,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 - [Estrutura do repositório](#-estrutura-do-repositório)
 - [Instalação](#-instalação)
 - [Backup e restauração](#-backup-e-restauração)
+- [Manutenção mensal](#-manutenção-mensal)
 - [Roadmap de configuração](#-roadmap-de-configuração)
 - [Stack por área](#-stack-por-área)
 - [Documentação oficial](#-documentação-oficial)
@@ -62,7 +63,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | Área | Destaques |
 |---|---|
 | **Terminal** | Windows Terminal com tema Catppuccin Mocha, fonte MesloLGS NF e transparência acrílica para todos os perfis; Ubuntu como padrão; pastas iniciais definidas |
-| **PowerShell** | PowerShell 7 com UTF-8 em tudo (acentos corretos em pipes e arquivos) |
+| **PowerShell** | PowerShell 7 com UTF-8 em tudo (acentos corretos em pipes e arquivos) e funções `Update-Tudo` e `Backup-Wsl` |
 | **Shell** | Zsh com Oh My Zsh, tema Powerlevel10k e plugins `git`, `zsh-autosuggestions` e `zsh-syntax-highlighting` |
 | **Navegação** | `eza` no lugar do `ls` (ícones e cores), `zoxide` para pular entre pastas por frequência de uso e `fzf` para busca interativa |
 | **Arquivos** | `bat` (`cat` com cores) e `fd` (`find` mais rápido e simples) |
@@ -82,7 +83,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 |---|---|
 | `ls`, `ll`, `la`, `lt` | Listagens com `eza` (simples, detalhada com Git, ocultos e árvore) |
 | `dev`, `est`, `proj`, `fac` | Vai direto para `~/dev`, estudos, projetos e o semestre atual |
-| `atualizar` | Atualiza tudo: pacotes do Ubuntu, o próprio mise e as ferramentas gerenciadas por ele |
+| `atualizar` | Atualiza tudo no Ubuntu: pacotes, mise e suas ferramentas, Rust, uv, plugins e tema do Zsh |
 | `zshconfig` / `recarregar` | Abre o `.zshrc` no VS Code / recarrega as configurações |
 | `bat`, `fd` | Atalhos para `batcat` e `fdfind` (nomes dos pacotes no Ubuntu) |
 | `waifu` | Mostra o `fastfetch` com a arte ASCII grande |
@@ -146,7 +147,7 @@ Os arquivos ficam no repositório e o sistema acessa cada um por **link simbóli
 
 ```bash
 sudo apt update
-sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetch hyperfine podman build-essential openjdk-25-jdk
+sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetch hyperfine podman podman-compose build-essential openjdk-25-jdk
 ```
 
 **2. Instalações manuais** (seguir a documentação oficial de cada um)
@@ -222,32 +223,16 @@ Seguindo a **regra 3-2-1** (3 cópias, 2 mídias, 1 fora de casa):
 
 > 🔐 O backup contém a chave SSH privada, por isso é sempre criptografado (AES-256) com senha guardada no Bitwarden.
 
-<details>
-<summary><b>📤 Fazer backup</b> (PowerShell, mensal)</summary>
-
-```powershell
-wsl --shutdown
-$data = Get-Date -Format yyyy-MM-dd
-$7z = "C:\Program Files\7-Zip\7z.exe"
-
-wsl --export Ubuntu "C:\backup\wsl\ubuntu-$data.tar"
-& $7z a -t7z -mx=1 -mhe=on -p "C:\backup\wsl\ubuntu-$data.7z" "C:\backup\wsl\ubuntu-$data.tar"
-& $7z t "C:\backup\wsl\ubuntu-$data.7z"       # testar: deve terminar em "Everything is Ok"
-
-Copy-Item "C:\backup\wsl\ubuntu-$data.7z" "G:\Meu Drive\Backups\"
-Remove-Item "C:\backup\wsl\ubuntu-$data.tar"  # o .tar não é criptografado
-```
+**📤 Fazer backup (mensal):** no PowerShell 7, rode `Backup-Wsl`. A função (definida em [`windows/powershell`](windows/powershell/Microsoft.PowerShell_profile.ps1)) exporta o Ubuntu, criptografa, **testa** o arquivo e só então envia ao Google Drive e apaga o `.tar` sem criptografia.
 
 > ℹ️ O aviso `pax format cannot archive sockets` é normal: sockets são arquivos temporários de programas em execução e não precisam de backup.
-
-</details>
 
 <details>
 <summary><b>📥 Restaurar</b> (PowerShell)</summary>
 
 ```powershell
-$7z = "C:\Program Files\7-Zip\7z.exe"
-& $7z x "C:\backup\wsl\ubuntu-AAAA-MM-DD.7z" -o"C:\backup\wsl"
+$zip = "C:\Program Files\7-Zip\7z.exe"
+& $zip x "C:\backup\wsl\ubuntu-AAAA-MM-DD.7z" -o"C:\backup\wsl"
 
 # Importa como uma distro nova (não mexe na atual)
 wsl --import Ubuntu-Restaurado "C:\WSL\Ubuntu-Restaurado" "C:\backup\wsl\ubuntu-AAAA-MM-DD.tar"
@@ -258,6 +243,22 @@ wsl -d Ubuntu-Restaurado
 > Documentação: [Importar e exportar distribuições](https://learn.microsoft.com/pt-br/windows/wsl/basic-commands#import-and-export-a-distribution)
 
 </details>
+
+---
+
+## 🔧 Manutenção mensal
+
+Uma vez por mês (~15 minutos), nesta ordem:
+
+| # | Onde | Comando | O que faz |
+|:-:|---|---|---|
+| 1 | Ubuntu | `atualizar` | Pacotes do Ubuntu, mise e suas ferramentas, Rust, uv, plugins e tema do Zsh |
+| 2 | PowerShell 7 | `Update-Tudo` | Apps do Windows (`winget`) e o próprio WSL |
+| 3 | Ubuntu | `podman system prune` · `mise prune` | Limpa containers parados, imagens órfãs e versões antigas de ferramentas |
+| 4 | Ubuntu | `./scripts/exportar-windows.sh` | Traz para o repositório as configs do Windows (revisar com `git diff` e commitar) |
+| 5 | PowerShell 7 | `Backup-Wsl` | Backup criptografado e testado, com cópia no Google Drive |
+
+> 💡 O passo 5 fecha o Ubuntu (`wsl --shutdown`), por isso fica por último.
 
 ---
 
@@ -313,10 +314,16 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] `atualizar` passa a atualizar também o mise e suas ferramentas
 - [x] Registrar documentação e tutorial oficial de cada ferramenta (tabela abaixo)
 
-### Fase 6 · Manutenção
-- [ ] Rotina mensal de atualização e limpeza
-- [ ] Backup mensal do WSL
-- [ ] Cópia extra do backup em pendrive
+### ✅ Fase 6 · Manutenção
+- [x] Rotina mensal documentada ([Manutenção mensal](#-manutenção-mensal))
+- [x] `atualizar` cobre apt, mise, Rust, uv e plugins do Zsh
+- [x] `Update-Tudo` (winget + WSL) e `Backup-Wsl` (backup testado) no PowerShell
+- [ ] Lembrete mensal na agenda
+
+### 🔜 Próximos passos
+- [ ] Cópia extra do backup em pendrive (quando tiver um)
+- [ ] Repositórios de estudo com README e publicados como portfólio
+- [ ] Projetos práticos com a stack da Fase 5
 
 ---
 
