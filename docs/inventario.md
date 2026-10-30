@@ -15,10 +15,11 @@
 ## Rede de segurança
 - Ponto de restauração nº 87 "E0 antes do setup-pc" (27/10/2026 18:40)
 - Backup: `C:\backup\wsl\ubuntu-2026-10-27.tar` (6,6 GiB). Contém ~/.ssh: não vai para a nuvem.
+  - ✅ Substituído na Fase 2 por backup **criptografado** (`.7z`, AES-256) com cópia no Google Drive; o `.tar` foi apagado.
 
-## Observações (resolver nas próximas etapas)
-- Windows Terminal abre em System32 e com o perfil Ubuntu como padrão → E3
-- PowerShell 5.1 quebra acentos sem UTF-8 → E3 ($PROFILE)
-- Atualizações pendentes: 7-Zip, Bitwarden, EA app → E1
-- Pasta /Docker na raiz da distro + ~/.docker + grupo docker: possível resto do Docker Desktop → E1/M17
-- Arquivos copiados de /mnt/c chegam com modo 755 (sem metadata no DrvFs) → M7
+## Observações (status em 30/10/2026)
+- ✅ Windows Terminal abre em System32 e com o perfil Ubuntu como padrão → resolvido na Fase 3 (`startingDirectory` nos perfis)
+- ✅ PowerShell 5.1 quebra acentos sem UTF-8 → resolvido na Fase 3 (PowerShell 7 + UTF-8 no `$PROFILE`)
+- ✅ Atualizações pendentes: 7-Zip, Bitwarden, EA app → resolvido na Fase 0 (`winget upgrade --all`) e na rotina mensal (`Update-Tudo`)
+- ✅ Pasta /Docker na raiz da distro + ~/.docker + grupo docker: resto do Docker Desktop → removido na Fase 2
+- ✅ Arquivos copiados de /mnt/c chegam com modo 755 (sem metadata no DrvFs) → resolvido na Fase 3 com a função `trazer` (o `fmask` no `wsl.conf` foi descartado porque quebraria a execução dos `.exe`)

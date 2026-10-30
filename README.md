@@ -131,7 +131,7 @@ dotfiles/
 ├── fastfetch/           # Configuração e arte ASCII
 ├── git/                 # .gitconfig, allowed_signers e .gitignore_global
 ├── mise/                # config.toml (versões globais: Node...)
-├── scripts/             # exportar-windows.sh
+├── scripts/             # exportar-windows.sh e verificar.sh (check-up do ambiente)
 ├── vscode/              # settings.json do VS Code
 ├── windows/             # Windows Terminal e perfil do PowerShell
 └── zsh/                 # .zshrc e .p10k.zsh
@@ -257,8 +257,9 @@ Uma vez por mês (~15 minutos), nesta ordem:
 | 3 | Ubuntu | `podman system prune` · `mise prune` | Limpa containers parados, imagens órfãs e versões antigas de ferramentas |
 | 4 | Ubuntu | `./scripts/exportar-windows.sh` | Traz para o repositório as configs do Windows (revisar com `git diff` e commitar) |
 | 5 | PowerShell 7 | `Backup-Wsl` | Backup criptografado e testado, com cópia no Google Drive |
+| 6 | Ubuntu | `./scripts/verificar.sh` | *Check-up* final: links, ferramentas, Git, segurança, configs do Windows e idade dos backups (✔ ⚠ ✖) |
 
-> 💡 O passo 5 fecha o Ubuntu (`wsl --shutdown`), por isso fica por último.
+> 💡 O passo 5 fecha o Ubuntu (`wsl --shutdown`); abra o terminal de novo para o passo 6.
 
 ---
 
@@ -318,6 +319,7 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] Rotina mensal documentada ([Manutenção mensal](#-manutenção-mensal))
 - [x] `atualizar` cobre apt, mise, Rust, uv e plugins do Zsh
 - [x] `Update-Tudo` (winget + WSL) e `Backup-Wsl` (backup testado) no PowerShell
+- [x] `scripts/verificar.sh`: check-up automático do ambiente (somente leitura)
 - [x] Lembrete mensal na agenda
 
 ### 🔜 Próximos passos
