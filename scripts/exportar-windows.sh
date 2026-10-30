@@ -35,5 +35,9 @@ exportar "$WIN_HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bb
 exportar "$WIN_HOME/Documents/PowerShell/Microsoft.PowerShell_profile.ps1" \
          "windows/powershell/Microsoft.PowerShell_profile.ps1"
 
+exportar "$WIN_HOME/AppData/Roaming/Code/User/settings.json" \
+         "vscode/settings.json"
+
 echo
 git -C "$REPO" status --short -- windows/
+git -C "$REPO" status --short -- windows/ vscode/
