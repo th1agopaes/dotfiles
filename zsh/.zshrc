@@ -168,3 +168,16 @@ cheat() {
   fi
   tldr "$1" 2>/dev/null || man "$1" 2>/dev/null || "$1" --help
 }
+
+# Pasta Downloads do Windows
+DL="/mnt/c/Users/kajik/Downloads"
+
+# Copia arquivos do Windows para a pasta atual com permissão 644
+# (arquivos do NTFS chegam como "executáveis" no Linux)
+trazer() {
+  if (( $# == 0 )); then
+    echo "uso: trazer <arquivo>..." >&2
+    return 1
+  fi
+  install -m 644 -t . -- "$@"
+}
