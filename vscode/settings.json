@@ -1,0 +1,39 @@
+{
+  // ===== Aparência =====
+  "workbench.colorTheme": "Catppuccin Mocha",
+  "workbench.iconTheme": "vscode-icons",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+
+  // ===== Edição =====
+  "editor.formatOnSave": true,
+  "files.autoSave": "onFocusChange",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // ===== Formatadores por linguagem =====
+  "[javascript][typescript][javascriptreact][typescriptreact][html][css][json][jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit",
+    },
+  },
+  "[c]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+  },
+
+  // ===== Git =====
+  "git.autofetch": true,
+
+  // ===== Claude Code =====
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.hideOnboarding": true,
+
+  // ===== Segurança =====
+  "security.workspace.trust.untrustedFiles": "open",
+  "remote.autoForwardPortsSource": "hybrid",
+  "vsicons.dontShowNewVersionMessage": true,
+}
