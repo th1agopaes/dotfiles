@@ -7,6 +7,7 @@
 ![Windows 11](https://img.shields.io/badge/Windows_11-Home-0078D4?style=for-the-badge)
 ![WSL 2](https://img.shields.io/badge/WSL_2-Ubuntu_26.04_LTS-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)
 ![Zsh](https://img.shields.io/badge/Shell-Zsh_5.9-F15A24?style=for-the-badge&logo=zsh&logoColor=white)
+![PowerShell](https://img.shields.io/badge/PowerShell-7-5391FE?style=for-the-badge)
 ![Git](https://img.shields.io/badge/Commits-Assinados_✔-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![Status](https://img.shields.io/badge/status-em_evolução-yellow?style=for-the-badge)
 
@@ -52,6 +53,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | Armazenamento | SSD 2 TB |
 | Sistema | Windows 11 Home + WSL 2 (Ubuntu 26.04 LTS) |
 | Shell | Zsh 5.9 + Oh My Zsh + Powerlevel10k |
+| Terminal | Windows Terminal + PowerShell 7 |
 
 ---
 
@@ -59,20 +61,22 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 
 | Área | Destaques |
 |---|---|
+| **Terminal** | Windows Terminal com tema Catppuccin Mocha, fonte MesloLGS NF e transparência acrílica para todos os perfis; Ubuntu como padrão; pastas iniciais definidas |
+| **PowerShell** | PowerShell 7 com UTF-8 em tudo (acentos corretos em pipes e arquivos) |
 | **Shell** | Zsh com Oh My Zsh, tema Powerlevel10k e plugins `git`, `zsh-autosuggestions` e `zsh-syntax-highlighting` |
 | **Navegação** | `eza` no lugar do `ls` (ícones e cores), `zoxide` para pular entre pastas por frequência de uso e `fzf` para busca interativa |
 | **Arquivos** | `bat` (`cat` com cores) e `fd` (`find` mais rápido e simples) |
 | **SSH** | `keychain` para carregar a chave SSH uma única vez por sessão |
 | **Visual** | `fastfetch` com arte ASCII personalizada ao abrir o terminal |
-| **Produtividade** | Função `cheat` (consulta `tldr` → `man` → `--help`) e aliases para pastas e tarefas comuns |
+| **Produtividade** | Funções `cheat` (consulta `tldr` → `man` → `--help`) e `trazer` (copia arquivos do Windows com permissão correta), além de aliases para pastas e tarefas comuns |
 | **Node.js** | Versões gerenciadas pelo `nvm` |
 | **Git** | Commits e tags assinados com chave SSH, autenticação via GitHub CLI, autocorreção com confirmação |
 | **IA** | Instruções pessoais para o Claude Code (`CLAUDE.md`) |
 
 <details>
-<summary><b>⌨️ Aliases</b></summary>
+<summary><b>⌨️ Aliases e funções</b></summary>
 
-| Alias | O que faz |
+| Comando | O que faz |
 |---|---|
 | `ls`, `ll`, `la`, `lt` | Listagens com `eza` (simples, detalhada com Git, ocultos e árvore) |
 | `dev`, `est`, `proj`, `fac` | Vai direto para `~/dev`, estudos, projetos e o semestre atual |
@@ -80,6 +84,9 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | `zshconfig` / `recarregar` | Abre o `.zshrc` no VS Code / recarrega as configurações |
 | `bat`, `fd` | Atalhos para `batcat` e `fdfind` (nomes dos pacotes no Ubuntu) |
 | `waifu` | Mostra o `fastfetch` com a arte ASCII grande |
+| `cheat <comando>` | Mostra exemplos rápidos de um comando |
+| `trazer <arquivo>` | Copia arquivos do Windows para a pasta atual com permissão `644` (ex.: `trazer "$DL/foto.png"`) |
+| `$DL` | Variável com a pasta Downloads do Windows |
 
 </details>
 
@@ -96,10 +103,12 @@ dotfiles/
 ├── docs/                # Inventário e anotações das fases
 ├── fastfetch/           # Configuração e arte ASCII
 ├── git/                 # .gitconfig e allowed_signers
+├── scripts/             # exportar-windows.sh
+├── windows/             # Windows Terminal e perfil do PowerShell
 └── zsh/                 # .zshrc e .p10k.zsh
 ```
 
-> 🚧 **Planejado:** `vscode/` (configurações e extensões), `windows/` (`.wslconfig`, Windows Terminal, pacotes winget) e `scripts/` (instalação automática).
+> 🚧 **Planejado:** `vscode/` (configurações e extensões).
 
 ---
 
@@ -142,6 +151,23 @@ chsh -s "$(which zsh)"   # define o Zsh como shell padrão
 ```
 
 > ⚠️ O `ln -sf` **substitui** arquivos existentes. Em uma máquina nova, faça backup antes. Se `~/.config/fastfetch` já existir como pasta comum, mova-a para outro lugar antes de criar o link.
+
+**4. Lado Windows**
+
+Pré-requisitos: [PowerShell 7](https://learn.microsoft.com/pt-br/powershell/scripting/install/installing-powershell-on-windows) (`winget install --id Microsoft.PowerShell --source winget`) e a fonte [MesloLGS NF](https://github.com/romkatv/powerlevel10k#fonts).
+
+```bash
+WT_DIR=/mnt/c/Users/kajik/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState
+PS_DIR=/mnt/c/Users/kajik/Documents/PowerShell
+
+cp ~/dev/dotfiles/windows/terminal/settings.json "$WT_DIR/"
+mkdir -p "$PS_DIR"
+cp ~/dev/dotfiles/windows/powershell/Microsoft.PowerShell_profile.ps1 "$PS_DIR/"
+```
+
+> 🛡️ Se a **proteção contra ransomware** (Acesso controlado a pastas) bloquear o perfil do PowerShell, libere o `pwsh.exe` em *Segurança do Windows → Proteção contra ransomware*, sem desativar a proteção.
+
+> 🔄 **Manutenção:** essas configurações vivem no Windows (os apps as reescrevem). Depois de mudar algo, rode `./scripts/exportar-windows.sh`, revise com `git diff` e faça o commit.
 
 ---
 
@@ -222,12 +248,15 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] Remover restos do Docker Desktop (grupo `docker`, `/Docker`, `~/.docker`)
 - [x] Backup criptografado do WSL (SSD + Google Drive) com restauração documentada
 
-### Fase 3 · Terminal
-- [ ] Windows Terminal configurado (pasta inicial, perfil padrão, fonte, tema)
-- [ ] PowerShell 7 com UTF-8 (acentos corretos)
-- [ ] WSL com permissões corretas em `/mnt/c` (`metadata` no `wsl.conf`)
-- [ ] Revisar `.zshrc` e tema do prompt
+### ✅ Fase 3 · Terminal
+- [x] Windows Terminal configurado (pasta inicial, perfil padrão, fonte e tema compartilhados em `defaults`)
+- [x] PowerShell 7 com UTF-8 (acentos corretos)
+- [x] Permissões de arquivos vindos do Windows: função `trazer` (`install -m 644`)
+- [x] Revisar `.zshrc` (`TERM_PROGRAM` condicional, configuração morta removida)
 - [x] Ferramentas modernas: `eza`, `zoxide`, `fzf`, `bat`, `fd`, `fastfetch`, `keychain`
+- [x] Configurações do Windows versionadas (`scripts/exportar-windows.sh`)
+
+> ⚖️ **Decisão:** o WSL foi mantido com as permissões padrão em `/mnt/c`. Forçar `644` via `fmask` no `wsl.conf` tiraria a permissão de execução dos `.exe` do Windows, quebrando comandos como `code` e `explorer.exe` dentro do Ubuntu.
 
 ### Fase 4 · Editores
 - [ ] VS Code com perfis por linguagem
@@ -238,6 +267,7 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [ ] Definir 1–2 ferramentas por área (tabela abaixo)
 - [ ] Instalar e testar cada uma
 - [ ] Registrar documentação oficial
+- [ ] Trocar o `nvm` por um gerenciador de versões mais rápido (medido: o `nvm` ocupa ~0,40 s dos 0,63 s de abertura do Zsh)
 
 ### Fase 6 · Manutenção
 - [ ] Rotina mensal de atualização e limpeza
@@ -273,6 +303,9 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 |---|---|
 | WSL | [learn.microsoft.com/pt-br/windows/wsl](https://learn.microsoft.com/pt-br/windows/wsl/) |
 | Windows Terminal | [learn.microsoft.com/pt-br/windows/terminal](https://learn.microsoft.com/pt-br/windows/terminal/) |
+| PowerShell | [learn.microsoft.com/pt-br/powershell](https://learn.microsoft.com/pt-br/powershell/) |
+| Catppuccin (tema) | [github.com/catppuccin/windows-terminal](https://github.com/catppuccin/windows-terminal) |
+| Acesso controlado a pastas | [support.microsoft.com/help/4046851](https://support.microsoft.com/help/4046851) |
 | Ubuntu no WSL | [documentation.ubuntu.com/wsl](https://documentation.ubuntu.com/wsl/) |
 | Git (livro Pro Git em PT-BR) | [git-scm.com/book/pt-br/v2](https://git-scm.com/book/pt-br/v2) |
 | GitHub Docs | [docs.github.com/pt](https://docs.github.com/pt) |
