@@ -318,7 +318,7 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] Rotina mensal documentada ([Manutenção mensal](#-manutenção-mensal))
 - [x] `atualizar` cobre apt, mise, Rust, uv e plugins do Zsh
 - [x] `Update-Tudo` (winget + WSL) e `Backup-Wsl` (backup testado) no PowerShell
-- [ ] Lembrete mensal na agenda
+- [x] Lembrete mensal na agenda
 
 ### 🔜 Próximos passos
 - [ ] Cópia extra do backup em pendrive (quando tiver um)
