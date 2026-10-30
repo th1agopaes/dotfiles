@@ -1,0 +1,15 @@
+# Arquivos pessoais de editores e do sistema operacional
+# (valem para todos os repositórios desta máquina)
+
+# JetBrains (IntelliJ, PyCharm...)
+.idea/
+*.iml
+
+# Vim
+*.swp
+*~
+
+# Windows / macOS
+Thumbs.db
+desktop.ini
+.DS_Store
