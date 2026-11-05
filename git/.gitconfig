@@ -28,3 +28,5 @@
 	allowedSignersFile = /home/kajik/.config/git/allowed_signers
 [help]
 	autocorrect = prompt
+[fetch]
+	prune = true
