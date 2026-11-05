@@ -68,7 +68,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | **Navegação** | `eza` no lugar do `ls` (ícones e cores), `zoxide` para pular entre pastas por frequência de uso e `fzf` para busca interativa |
 | **Arquivos** | `bat` (`cat` com cores) e `fd` (`find` mais rápido e simples) |
 | **SSH** | `keychain` para carregar a chave SSH uma única vez por sessão |
-| **Visual** | `fastfetch` com arte ASCII personalizada ao abrir o terminal |
+| **Visual** | `fastfetch` ao abrir o terminal, com o kanji **春** (*haru*, "primavera") em braille e rosa sakura |
 | **Produtividade** | Funções `cheat` (consulta `tldr` → `man` → `--help`) e `trazer` (copia arquivos do Windows com permissão correta), além de aliases para pastas e tarefas comuns |
 | **Runtimes** | [mise](https://mise.jdx.dev/) gerencia as versões (Node.js 26 LTS); Python via `uv`; Rust via `rustup`; Java 25 (OpenJDK) e GCC pelo `apt` |
 | **Medição** | `hyperfine` para benchmarks confiáveis (abertura do Zsh: **~393 ms**) |
@@ -86,7 +86,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | `atualizar` | Atualiza tudo no Ubuntu: pacotes, mise e suas ferramentas, Rust, uv, plugins e tema do Zsh |
 | `zshconfig` / `recarregar` | Abre o `.zshrc` no VS Code / recarrega as configurações |
 | `bat`, `fd` | Atalhos para `batcat` e `fdfind` (nomes dos pacotes no Ubuntu) |
-| `waifu` | Mostra o `fastfetch` com a arte ASCII grande |
+| `sistema` | Mostra as informações do sistema com o kanji 春 grande |
 | `cheat <comando>` | Mostra exemplos rápidos de um comando |
 | `trazer <arquivo>` | Copia arquivos do Windows para a pasta atual com permissão `644` (ex.: `trazer "$DL/foto.png"`) |
 | `$DL` | Variável com a pasta Downloads do Windows |
@@ -128,7 +128,7 @@ dotfiles/
 ├── .gitignore           # Arquivos que nunca devem ir para o Git
 ├── claude/              # CLAUDE.md (instruções do Claude Code)
 ├── docs/                # Inventário e anotações das fases
-├── fastfetch/           # Configuração e arte ASCII
+├── fastfetch/           # Configuração e logo (kanji 春 em braille)
 ├── git/                 # .gitconfig, allowed_signers e .gitignore_global
 ├── mise/                # config.toml (versões globais: Node...)
 ├── scripts/             # exportar-windows.sh e verificar.sh (check-up do ambiente)

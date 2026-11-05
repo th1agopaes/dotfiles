@@ -1,5 +1,5 @@
 eval "$(keychain --eval --quiet id_ed25519)"
-fastfetch --file ~/.config/fastfetch/meu_desenho-mini.txt --logo-color-1 cyan
+fastfetch --file ~/.config/fastfetch/haru-mini.txt --logo-color-1 magenta
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -156,7 +156,7 @@ alias zshconfig='code ~/.zshrc'
 alias recarregar='source ~/.zshrc'
 
 # --- Visual ---
-alias waifu='fastfetch --file ~/.config/fastfetch/meu_desenho.txt --logo-color-1 cyan'
+alias sistema='fastfetch --file ~/.config/fastfetch/haru.txt --logo-color-1 magenta'
 # --- Navegação (zoxide) ---
 eval "$(zoxide init zsh)"
 
