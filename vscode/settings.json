@@ -9,11 +9,15 @@
   "files.autoSave": "onFocusChange",
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+  },
 
   // ===== Formatadores por linguagem =====
   "[javascript][typescript][javascriptreact][typescriptreact][html][css][json][jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
+
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.codeActionsOnSave": {
@@ -21,12 +25,15 @@
       "source.organizeImports": "explicit",
     },
   },
+
   "[c]": {
     "editor.defaultFormatter": "ms-vscode.cpptools",
   },
 
   // ===== Git =====
   "git.autofetch": true,
+
+  "editor.defaultFormatter": "biomejs.biome",
 
   // ===== Claude Code =====
   "claudeCode.preferredLocation": "panel",
@@ -36,4 +43,17 @@
   "security.workspace.trust.untrustedFiles": "open",
   "remote.autoForwardPortsSource": "hybrid",
   "vsicons.dontShowNewVersionMessage": true,
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/microsoft/vscode/": true,
+    "https://raw.githubusercontent.com/devcontainers/spec/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://spec.openapis.org/": true,
+    "https://json-schema.org/": true,
+    "https://developer.microsoft.com/json-schemas/": true,
+    "https://biomejs.dev": true,
+  },
+  "redhat.telemetry.enabled": false,
+  "cSpell.language": "en,pt-BR",
 }
