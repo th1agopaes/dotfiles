@@ -22,11 +22,22 @@
 	format = ssh
 [commit]
 	gpgsign = true
+	verbose = true
 [tag]
 	gpgsign = true
+	sort = version:refname
 [gpg "ssh"]
 	allowedSignersFile = /home/kajik/.config/git/allowed_signers
 [help]
 	autocorrect = prompt
 [fetch]
 	prune = true
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+[merge]
+	conflictStyle = zdiff3
+[branch]
+	sort = -committerdate
+[column]
+	ui = auto
