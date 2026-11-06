@@ -1,0 +1,43 @@
+# Verificações automáticas a cada push na main e em Pull Requests.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Privilégio mínimo: o workflow só precisa ler o código
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint (ShellCheck + Zsh)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Instalar ferramentas
+        run: sudo apt-get update && sudo apt-get install -y shellcheck zsh
+
+      - name: ShellCheck nos scripts
+        run: shellcheck -S warning scripts/*.sh
+
+      - name: Sintaxe das configurações do Zsh
+        run: |
+          zsh -n zsh/.zshrc
+          zsh -n zsh/.p10k.zsh
+
+  segredos:
+    name: Segredos (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # histórico completo: procura segredos em todos os commits
+
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: false   # não comenta em PRs (dispensa permissão de escrita)

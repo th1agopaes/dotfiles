@@ -1,0 +1,9 @@
+# Mantém as versões das actions do CI atualizadas (abre PRs automaticamente)
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
