@@ -5,10 +5,10 @@
 	email = 227227421+th1agopaes@users.noreply.github.com
 	signingkey = /home/kajik/.ssh/id_ed25519.pub
 [credential "https://github.com"]
-	helper = 
+	helper =
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
+	helper =
 	helper = !/usr/bin/gh auth git-credential
 [core]
 	pager = less -FRX
@@ -49,3 +49,23 @@
 	fsckObjects = true
 [safe]
 	bareRepository = explicit
+[alias]
+	# status curto, com o nome da branch
+	st = status -sb
+	# histórico em grafo (só a branch atual / todas)
+	lg = log --graph --oneline --decorate
+	lga = log --graph --oneline --decorate --all
+	# último commit com os arquivos alterados
+	last = log -1 --stat
+	# desfaz o último commit mantendo as alterações (só antes do push!)
+	undo = reset --soft HEAD~1
+	# tira um arquivo da área de preparo sem perder a alteração
+	unstage = restore --staged
+	# branches ordenadas pelo uso mais recente
+	recent = branch --sort=-committerdate --format='%(committerdate:relative)%09%(refname:short)'
+	# lista branches cujo remoto foi apagado (PR já mesclado por squash)
+	gone = "!git fetch --prune && git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {print $1}'"
+	# apaga essas branches (rode git gone antes para conferir)
+	prune-gone = "!git fetch --prune && git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D"
+	# push forçado seguro: recusa se o remoto tiver algo que você nunca viu
+	pushf = push --force-with-lease --force-if-includes
