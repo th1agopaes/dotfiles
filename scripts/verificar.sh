@@ -155,13 +155,29 @@ while IFS= read -r gitdir; do
     aviso "$nome: sem repositório remoto (não tem cópia no GitHub)"
     continue
   fi
+  problemas=0
   alteracoes="$(git -C "$repo" status --porcelain | wc -l)"
-  pendentes="$(git -C "$repo" log --branches --not --remotes --oneline | wc -l)"
-  if (( alteracoes == 0 && pendentes == 0 )); then
-    ok "$nome"
-  else
-    aviso "$nome: $alteracoes alteração(ões) sem commit e $pendentes commit(s) sem push"
+  if (( alteracoes > 0 )); then
+    aviso "$nome: $alteracoes alteração(ões) sem commit"
+    problemas=1
   fi
+  # Analisa cada branch local: commits sem push, remoto apagado ou nunca enviada
+  while read -r branch upstream track; do
+    if [[ -z "$upstream" ]]; then
+      sem_push="$(git -C "$repo" log "$branch" --not --remotes --oneline | wc -l)"
+      if (( sem_push > 0 )); then
+        aviso "$nome: branch $branch nunca enviada ($sem_push commit(s) só no PC)"
+        problemas=1
+      fi
+    elif [[ "$track" == *gone* ]]; then
+      aviso "$nome: branch $branch teve o remoto apagado (PR já mesclado?) → revise e apague"
+      problemas=1
+    elif [[ "$track" == *ahead* ]]; then
+      aviso "$nome: branch $branch com commit(s) sem push $track"
+      problemas=1
+    fi
+  done < <(git -C "$repo" for-each-ref --format='%(refname:short) %(upstream:short) %(upstream:track)' refs/heads)
+  (( problemas == 0 )) && ok "$nome"
 done < <(find "$HOME/dev" \( -name node_modules -o -name .venv \) -prune -o -type d -name .git -print -prune 2>/dev/null | sort)
 
 # ---------- Resumo ----------
