@@ -11,7 +11,7 @@
 	helper =
 	helper = !/usr/bin/gh auth git-credential
 [core]
-	pager = less -FRX
+	pager = delta
 	autocrlf = input
 	excludesFile = ~/.gitignore_global
 [push]
@@ -69,3 +69,16 @@
 	prune-gone = "!git fetch --prune && git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D"
 	# push forçado seguro: recusa se o remoto tiver algo que você nunca viu
 	pushf = push --force-with-lease --force-if-includes
+[interactive]
+	# git add -p também colorido pelo delta
+	diffFilter = delta --color-only
+[include]
+	# tema Catppuccin: cópia revisada guardada no próprio dotfiles
+	path = ~/dev/dotfiles/git/catppuccin-delta.gitconfig
+[delta]
+	features = catppuccin-mocha
+	# n e N pulam entre arquivos/commits dentro do pager
+	navigate = true
+	line-numbers = true
+	# Windows Terminal e o terminal do VS Code mostram cores de 24 bits
+	true-color = always

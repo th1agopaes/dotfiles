@@ -60,7 +60,7 @@ checar_cmd() {
   fi
 }
 for c in zsh git gh mise node npm uv rustc cargo java gcc podman podman-compose \
-         hyperfine eza zoxide fzf batcat fdfind tldr keychain fastfetch claude; do
+         hyperfine eza zoxide fzf batcat fdfind tldr keychain fastfetch delta claude; do
   checar_cmd "$c"
 done
 if command -v code >/dev/null 2>&1; then ok "code (VS Code) disponível"; else aviso "code (VS Code) não está no PATH"; fi
