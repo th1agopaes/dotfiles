@@ -14,10 +14,9 @@
 	pager = less -FRX
 	autocrlf = input
 	excludesFile = ~/.gitignore_global
-[pull]
-	rebase = false
 [push]
 	autoSetupRemote = true
+	followTags = true
 [gpg]
 	format = ssh
 [commit]
@@ -41,3 +40,12 @@
 	sort = -committerdate
 [column]
 	ui = auto
+[pull]
+	ff = only
+[rebase]
+	autoSquash = true
+	autoStash = true
+[transfer]
+	fsckObjects = true
+[safe]
+	bareRepository = explicit
