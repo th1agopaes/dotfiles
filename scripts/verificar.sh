@@ -147,6 +147,10 @@ secao "Projetos em ~/dev (tudo salvo no GitHub?)"
 while IFS= read -r gitdir; do
   repo="${gitdir%/.git}"
   nome="${repo#"$HOME"/}"
+  if ! git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
+    erro "$nome: pasta .git incompleta ou corrompida (não é um repositório válido)"
+    continue
+  fi
   if [[ -z "$(git -C "$repo" remote)" ]]; then
     aviso "$nome: sem repositório remoto (não tem cópia no GitHub)"
     continue
