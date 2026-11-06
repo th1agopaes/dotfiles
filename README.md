@@ -10,6 +10,7 @@
 ![PowerShell](https://img.shields.io/badge/PowerShell-7-5391FE?style=for-the-badge)
 ![Git](https://img.shields.io/badge/Commits-Assinados_✔-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![Status](https://img.shields.io/badge/status-ativo-brightgreen?style=for-the-badge)
+[![CI](https://github.com/th1agopaes/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/th1agopaes/dotfiles/actions/workflows/ci.yml)
 
 </div>
 
@@ -126,6 +127,7 @@ dotfiles/
 ├── README.md            # Este manual
 ├── LICENSE              # Licença MIT
 ├── .gitignore           # Arquivos que nunca devem ir para o Git
+├── .github/             # CI (ShellCheck, Zsh e Gitleaks) e Dependabot
 ├── claude/              # CLAUDE.md (instruções do Claude Code)
 ├── docs/                # Inventário e anotações das fases
 ├── fastfetch/           # Configuração e logo (kanji 春 em braille)
@@ -322,6 +324,13 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] `scripts/verificar.sh`: check-up automático do ambiente (somente leitura)
 - [x] Lembrete mensal na agenda
 
+### Fase 7 · Dotfiles 2.0
+- [x] CI no GitHub Actions: ShellCheck, sintaxe do Zsh e Gitleaks a cada push + Dependabot para as actions
+- [ ] Git moderno: configurações recomendadas e aliases
+- [ ] `.zshrc` organizado em módulos (aliases e funções separados)
+- [ ] `scripts/instalar.sh`: um comando recria o ambiente
+- [ ] Perfis do VS Code completos e exportados + lista de apps do winget
+
 ### 🔜 Próximos passos
 - [ ] Cópia extra do backup em pendrive (quando tiver um)
 - [ ] Repositórios de estudo com README e publicados como portfólio
@@ -443,6 +452,7 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 - ✅ Dados sensíveis ficam em arquivos locais listados no `.gitignore`
 - ✅ Revisar o `git diff --staged` antes de cada commit
 - ✅ Auditoria de segredos com [Gitleaks](https://github.com/gitleaks/gitleaks) antes de tornar um repositório público
+- ✅ Gitleaks roda automaticamente no CI a cada push, em todo o histórico
 
 ---
 
