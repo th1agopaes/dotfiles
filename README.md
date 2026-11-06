@@ -257,7 +257,7 @@ Uma vez por mês (~15 minutos), nesta ordem:
 | 3 | Ubuntu | `podman system prune` · `mise prune` | Limpa containers parados, imagens órfãs e versões antigas de ferramentas |
 | 4 | Ubuntu | `./scripts/exportar-windows.sh` | Traz para o repositório as configs do Windows (revisar com `git diff` e commitar) |
 | 5 | PowerShell 7 | `Backup-Wsl` | Backup criptografado e testado, com cópia no Google Drive |
-| 6 | Ubuntu | `./scripts/verificar.sh` | *Check-up* final: links, ferramentas, Git, segurança, configs do Windows e idade dos backups (✔ ⚠ ✖) |
+| 6 | Ubuntu | `./scripts/verificar.sh` | *Check-up* final: links, ferramentas, Git, segurança, configs do Windows, backups e projetos sem push (✔ ⚠ ✖) |
 
 > 💡 O passo 5 fecha o Ubuntu (`wsl --shutdown`); abra o terminal de novo para o passo 6.
 

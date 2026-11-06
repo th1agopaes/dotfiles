@@ -142,6 +142,24 @@ else
   echo "  ℹ Google Drive (G:) não fica visível no WSL; o Backup-Wsl confirma a cópia ao terminar"
 fi
 
+# ---------- 8. Projetos em ~/dev ----------
+secao "Projetos em ~/dev (tudo salvo no GitHub?)"
+while IFS= read -r gitdir; do
+  repo="${gitdir%/.git}"
+  nome="${repo#"$HOME"/}"
+  if [[ -z "$(git -C "$repo" remote)" ]]; then
+    aviso "$nome: sem repositório remoto (não tem cópia no GitHub)"
+    continue
+  fi
+  alteracoes="$(git -C "$repo" status --porcelain | wc -l)"
+  pendentes="$(git -C "$repo" log --branches --not --remotes --oneline | wc -l)"
+  if (( alteracoes == 0 && pendentes == 0 )); then
+    ok "$nome"
+  else
+    aviso "$nome: $alteracoes alteração(ões) sem commit e $pendentes commit(s) sem push"
+  fi
+done < <(find "$HOME/dev" \( -name node_modules -o -name .venv \) -prune -o -type d -name .git -print -prune 2>/dev/null | sort)
+
 # ---------- Resumo ----------
 echo
 echo "${CIANO}== Resumo ==${FIM}  ${VERDE}✔ $OK${FIM}  ${AMARELO}⚠ $AVISOS${FIM}  ${VERMELHO}✖ $ERROS${FIM}"
