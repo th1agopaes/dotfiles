@@ -73,7 +73,8 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | **Produtividade** | Funções `cheat` (consulta `tldr` → `man` → `--help`) e `trazer` (copia arquivos do Windows com permissão correta), além de aliases para pastas e tarefas comuns |
 | **Runtimes** | [mise](https://mise.jdx.dev/) gerencia as versões (Node.js 26 LTS); Python via `uv`; Rust via `rustup`; Java 25 (OpenJDK) e GCC pelo `apt` |
 | **Medição** | `hyperfine` para benchmarks confiáveis (abertura do Zsh: **~393 ms**) |
-| **Git** | Commits e tags assinados com chave SSH, autenticação via GitHub CLI, autocorreção com confirmação e `.gitignore` global para arquivos de editores |
+| **Git** | Commits e tags assinados com chave SSH, autenticação via GitHub CLI e `.gitignore` global; padrões modernos (diff `histogram`, conflitos `zdiff3`, `pull` só *fast-forward*, autocorreção com confirmação, checagem dos objetos recebidos) e aliases para o dia a dia |
+| **Diffs** | [delta](https://dandavison.github.io/delta/) com tema Catppuccin Mocha: realce de sintaxe, números de linha e `n`/`N` para pular entre arquivos |
 | **Editores** | VS Code com perfis por linguagem, tema Catppuccin Mocha e Settings Sync; IntelliJ IDEA e PyCharm gerenciados pelo JetBrains Toolbox com licença educacional |
 | **IA** | Instruções pessoais para o Claude Code (`CLAUDE.md`) |
 
@@ -91,6 +92,22 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 | `cheat <comando>` | Mostra exemplos rápidos de um comando |
 | `trazer <arquivo>` | Copia arquivos do Windows para a pasta atual com permissão `644` (ex.: `trazer "$DL/foto.png"`) |
 | `$DL` | Variável com a pasta Downloads do Windows |
+
+</details>
+
+<details>
+<summary><b>🌿 Aliases do Git</b></summary>
+
+| Alias | O que faz |
+|---|---|
+| `git st` | Status curto, com a branch e o remoto |
+| `git lg` / `git lga` | Histórico em grafo (branch atual / todas) |
+| `git last` | Último commit com os arquivos alterados |
+| `git recent` | Branches ordenadas pelo uso mais recente |
+| `git unstage <arquivo>` | Tira o arquivo da área de preparo sem perder a alteração |
+| `git undo` | Desfaz o último commit mantendo as alterações (só antes do push) |
+| `git gone` / `git prune-gone` | Lista / apaga branches cujo remoto sumiu (PR mesclado por *squash*) |
+| `git pushf` | Push forçado seguro (`--force-with-lease --force-if-includes`) |
 
 </details>
 
@@ -131,8 +148,8 @@ dotfiles/
 ├── claude/              # CLAUDE.md (instruções do Claude Code)
 ├── docs/                # Inventário e anotações das fases
 ├── fastfetch/           # Configuração e logo (kanji 春 em braille)
-├── git/                 # .gitconfig, allowed_signers e .gitignore_global
-├── mise/                # config.toml (versões globais: Node...)
+├── git/                 # .gitconfig, allowed_signers, .gitignore_global e tema do delta
+├── mise/                # config.toml (versões globais: Node e delta)
 ├── scripts/             # exportar-windows.sh e verificar.sh (check-up do ambiente)
 ├── vscode/              # settings.json do VS Code
 ├── windows/             # Windows Terminal e perfil do PowerShell
@@ -181,10 +198,12 @@ ln -sf  ~/dev/dotfiles/claude/CLAUDE.md     ~/.claude/CLAUDE.md
 ln -sf  ~/dev/dotfiles/mise/config.toml     ~/.config/mise/config.toml
 
 chsh -s "$(which zsh)"   # define o Zsh como shell padrão
-mise install             # instala as versões listadas no config.toml (ex.: Node 26)
+mise install             # instala as versões listadas no config.toml (Node 26 e delta)
 ```
 
 > ⚠️ O `ln -sf` **substitui** arquivos existentes. Em uma máquina nova, faça backup antes. Se `~/.config/fastfetch` já existir como pasta comum, mova-a para outro lugar antes de criar o link.
+
+> ℹ️ O `.gitconfig` usa o `delta` para exibir diffs. Rode o `mise install` logo depois dos links; sem o delta, comandos como `git diff` não mostram nada.
 
 **4. Lado Windows**
 
@@ -326,7 +345,7 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 
 ### Fase 7 · Dotfiles 2.0
 - [x] CI no GitHub Actions: ShellCheck, sintaxe do Zsh e Gitleaks a cada push + Dependabot para as actions
-- [ ] Git moderno: configurações recomendadas e aliases
+- [x] Git moderno: configurações recomendadas, aliases e diffs com delta (tema Catppuccin)
 - [ ] `.zshrc` organizado em módulos (aliases e funções separados)
 - [ ] `scripts/instalar.sh`: um comando recria o ambiente
 - [ ] Perfis do VS Code completos e exportados + lista de apps do winget
@@ -391,6 +410,9 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 | Acesso controlado a pastas | [support.microsoft.com/help/4046851](https://support.microsoft.com/help/4046851) |
 | Ubuntu no WSL | [documentation.ubuntu.com/wsl](https://documentation.ubuntu.com/wsl/) |
 | Git (livro Pro Git em PT-BR) | [git-scm.com/book/pt-br/v2](https://git-scm.com/book/pt-br/v2) |
+| Git (referência de comandos e configurações) | [git-scm.com/docs](https://git-scm.com/docs) |
+| delta | [dandavison.github.io/delta](https://dandavison.github.io/delta/) |
+| Catppuccin (delta) | [github.com/catppuccin/delta](https://github.com/catppuccin/delta) |
 | GitHub Docs | [docs.github.com/pt](https://docs.github.com/pt) |
 | GitHub CLI | [cli.github.com/manual](https://cli.github.com/manual/) |
 | Zsh | [zsh.sourceforge.io/Doc](https://zsh.sourceforge.io/Doc/) |
@@ -453,6 +475,7 @@ Fontes oficiais das ferramentas em uso. Sempre que uma resposta de IA parecer du
 - ✅ Revisar o `git diff --staged` antes de cada commit
 - ✅ Auditoria de segredos com [Gitleaks](https://github.com/gitleaks/gitleaks) antes de tornar um repositório público
 - ✅ Gitleaks roda automaticamente no CI a cada push, em todo o histórico
+- ✅ Configurações de terceiros (ex.: tema do delta) entram como cópia revisada, fixada em um commit e conferida por hash
 
 ---
 
