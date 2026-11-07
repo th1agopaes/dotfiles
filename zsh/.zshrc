@@ -32,4 +32,4 @@ done
 unset modulo
 
 # --- 5. Ajustes só desta máquina (arquivo opcional, fica fora do Git) ---
-[[ -r ~/.zshrc.local ]] && source ~/.zshrc.local
+[[ ! -r ~/.zshrc.local ]] || source ~/.zshrc.local
