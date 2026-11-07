@@ -65,7 +65,7 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 |---|---|
 | **Terminal** | Windows Terminal com tema Catppuccin Mocha, fonte MesloLGS NF e transparência acrílica para todos os perfis; Ubuntu como padrão; pastas iniciais definidas |
 | **PowerShell** | PowerShell 7 com UTF-8 em tudo (acentos corretos em pipes e arquivos) e funções `Update-Tudo` e `Backup-Wsl` |
-| **Shell** | Zsh com Oh My Zsh, tema Powerlevel10k e plugins `git`, `zsh-autosuggestions` e `zsh-syntax-highlighting` |
+| **Shell** | Zsh com Oh My Zsh, tema Powerlevel10k e plugins `git`, `zsh-autosuggestions` e `zsh-syntax-highlighting`; configuração em módulos (ambiente, aliases, funções e integrações) e `~/.zshrc.local` opcional para ajustes só da máquina, fora do Git |
 | **Navegação** | `eza` no lugar do `ls` (ícones e cores), `zoxide` para pular entre pastas por frequência de uso e `fzf` para busca interativa |
 | **Arquivos** | `bat` (`cat` com cores) e `fd` (`find` mais rápido e simples) |
 | **SSH** | `keychain` para carregar a chave SSH uma única vez por sessão |
@@ -85,8 +85,8 @@ Este repositório é o **manual do meu ambiente de desenvolvimento**. Ele reúne
 |---|---|
 | `ls`, `ll`, `la`, `lt` | Listagens com `eza` (simples, detalhada com Git, ocultos e árvore) |
 | `dev`, `est`, `proj`, `fac` | Vai direto para `~/dev`, estudos, projetos e o semestre atual |
-| `atualizar` | Atualiza tudo no Ubuntu: pacotes, mise e suas ferramentas, Rust, uv, plugins e tema do Zsh |
-| `zshconfig` / `recarregar` | Abre o `.zshrc` no VS Code / recarrega as configurações |
+| `atualizar` | Atualiza tudo no Ubuntu: pacotes, mise e suas ferramentas, Rust, uv, plugins e tema do Zsh e o Oh My Zsh |
+| `zshconfig` / `recarregar` | Abre a pasta `zsh/` (`.zshrc` + módulos) no VS Code / reinicia o shell com `omz reload` (sessão limpa) |
 | `bat`, `fd` | Atalhos para `batcat` e `fdfind` (nomes dos pacotes no Ubuntu) |
 | `sistema` | Mostra as informações do sistema com o kanji 春 grande |
 | `cheat <comando>` | Mostra exemplos rápidos de um comando |
@@ -153,7 +153,7 @@ dotfiles/
 ├── scripts/             # exportar-windows.sh e verificar.sh (check-up do ambiente)
 ├── vscode/              # settings.json do VS Code
 ├── windows/             # Windows Terminal e perfil do PowerShell
-└── zsh/                 # .zshrc e .p10k.zsh
+└── zsh/                 # .zshrc (principal), módulos (ambiente, aliases, funcoes, integracoes) e .p10k.zsh
 ```
 
 ---
@@ -204,6 +204,8 @@ mise install             # instala as versões listadas no config.toml (Node 26 
 > ⚠️ O `ln -sf` **substitui** arquivos existentes. Em uma máquina nova, faça backup antes. Se `~/.config/fastfetch` já existir como pasta comum, mova-a para outro lugar antes de criar o link.
 
 > ℹ️ O `.gitconfig` usa o `delta` para exibir diffs. Rode o `mise install` logo depois dos links; sem o delta, comandos como `git diff` não mostram nada.
+
+> ℹ️ Os módulos do Zsh são carregados direto de `~/dev/dotfiles/zsh/`, por isso o repositório precisa ser clonado nesse caminho.
 
 **4. Lado Windows**
 
@@ -273,7 +275,7 @@ Uma vez por mês (~15 minutos), nesta ordem:
 
 | # | Onde | Comando | O que faz |
 |:-:|---|---|---|
-| 1 | Ubuntu | `atualizar` | Pacotes do Ubuntu, mise e suas ferramentas, Rust, uv, plugins e tema do Zsh |
+| 1 | Ubuntu | `atualizar` | Pacotes do Ubuntu, mise e suas ferramentas, Rust, uv, plugins e tema do Zsh e o Oh My Zsh |
 | 2 | PowerShell 7 | `Update-Tudo` | Apps do Windows (`winget`) e o próprio WSL |
 | 3 | Ubuntu | `podman system prune` · `mise prune` | Limpa containers parados, imagens órfãs e versões antigas de ferramentas |
 | 4 | Ubuntu | `./scripts/exportar-windows.sh` | Traz para o repositório as configs do Windows (revisar com `git diff` e commitar) |
@@ -346,7 +348,7 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 ### Fase 7 · Dotfiles 2.0
 - [x] CI no GitHub Actions: ShellCheck, sintaxe do Zsh e Gitleaks a cada push + Dependabot para as actions
 - [x] Git moderno: configurações recomendadas, aliases e diffs com delta (tema Catppuccin)
-- [ ] `.zshrc` organizado em módulos (aliases e funções separados)
+- [x] `.zshrc` organizado em módulos (ambiente, aliases, funções e integrações), com o CI conferindo cada um
 - [ ] `scripts/instalar.sh`: um comando recria o ambiente
 - [ ] Perfis do VS Code completos e exportados + lista de apps do winget
 
