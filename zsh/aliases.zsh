@@ -21,7 +21,7 @@ alias fd='fdfind'
 
 # --- Manutenção ---
 alias zshconfig='code "$DOTFILES/zsh"'
-alias recarregar='source ~/.zshrc'
+alias recarregar='omz reload'
 
 # --- Visual ---
 alias sistema='fastfetch --file ~/.config/fastfetch/haru.txt --logo-color-1 magenta'
