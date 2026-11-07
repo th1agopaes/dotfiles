@@ -28,6 +28,7 @@ jobs:
         run: |
           zsh -n zsh/.zshrc
           zsh -n zsh/.p10k.zsh
+          for arquivo in zsh/*.zsh; do zsh -n "$arquivo"; done
 
   segredos:
     name: Segredos (Gitleaks)
