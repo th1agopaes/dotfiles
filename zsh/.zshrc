@@ -19,6 +19,8 @@ fi
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+# Atualizações do Oh My Zsh só pelo `atualizar` (sem perguntas ao abrir o terminal)
+zstyle ':omz:update' mode disabled
 source "$ZSH/oh-my-zsh.sh"
 
 # Visual do prompt (gerado por `p10k configure`)

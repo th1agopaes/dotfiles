@@ -21,7 +21,7 @@ trazer() {
   install -m 644 -t . -- "$@"
 }
 
-# Atualiza tudo no Ubuntu: apt, mise, Rust, uv e plugins/tema do Zsh
+# Atualiza tudo no Ubuntu: apt, mise, Rust, uv, plugins/tema do Zsh e Oh My Zsh
 atualizar() {
   print -P "%F{cyan}==> Ubuntu (apt)%f"
   sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y
@@ -40,4 +40,9 @@ atualizar() {
   for repo in ${ZSH_CUSTOM:-$ZSH/custom}/{plugins,themes}/*/.git(N:h); do
     git -C "$repo" pull --quiet --ff-only && print "  ✔ ${repo:t}"
   done
+
+
+  # Por último: se houver novidade, o omz update reinicia o terminal
+  print -P "%F{cyan}==> Oh My Zsh%f"
+  omz update
 }
