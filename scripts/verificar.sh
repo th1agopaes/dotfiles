@@ -81,6 +81,8 @@ if command -v hyperfine >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; t
   rm -f "$tmp"
   if [[ -n "$ms" ]]; then
     (( ms <= 500 )) && ok "abertura do zsh: ${ms} ms" || aviso "abertura do zsh: ${ms} ms (meta: até 500 ms)"
+  else
+    aviso "não deu para medir a abertura do zsh (o .zshrc terminou com erro?)"
   fi
 fi
 
