@@ -11,6 +11,7 @@
 ![Git](https://img.shields.io/badge/Commits-Assinados_✔-F05032?style=for-the-badge&logo=git&logoColor=white)
 ![Status](https://img.shields.io/badge/status-ativo-brightgreen?style=for-the-badge)
 [![CI](https://github.com/th1agopaes/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/th1agopaes/dotfiles/actions/workflows/ci.yml)
+[![Instalação](https://github.com/th1agopaes/dotfiles/actions/workflows/instalacao.yml/badge.svg)](https://github.com/th1agopaes/dotfiles/actions/workflows/instalacao.yml)
 
 </div>
 
@@ -144,13 +145,13 @@ dotfiles/
 ├── README.md            # Este manual
 ├── LICENSE              # Licença MIT
 ├── .gitignore           # Arquivos que nunca devem ir para o Git
-├── .github/             # CI (ShellCheck, Zsh e Gitleaks) e Dependabot
+├── .github/             # CI (ShellCheck, Zsh e Gitleaks), teste de instalação e Dependabot
 ├── claude/              # CLAUDE.md (instruções do Claude Code)
 ├── docs/                # Inventário e anotações das fases
 ├── fastfetch/           # Configuração e logo (kanji 春 em braille)
 ├── git/                 # .gitconfig, allowed_signers, .gitignore_global e tema do delta
 ├── mise/                # config.toml (versões globais: Node e delta)
-├── scripts/             # exportar-windows.sh e verificar.sh (check-up do ambiente)
+├── scripts/             # instalar.sh (máquina nova), verificar.sh (check-up) e exportar-windows.sh
 ├── vscode/              # settings.json do VS Code
 ├── windows/             # Windows Terminal e perfil do PowerShell
 └── zsh/                 # .zshrc (principal), módulos (ambiente, aliases, funcoes, integracoes) e .p10k.zsh
@@ -162,50 +163,38 @@ dotfiles/
 
 Os arquivos ficam no repositório e o sistema acessa cada um por **link simbólico** (um "atalho" que aponta para o arquivo real).
 
-**1. Pacotes do Ubuntu**
+**1. Clonar** (por HTTPS: numa máquina nova a chave SSH ainda não existe)
 
 ```bash
-sudo apt update
-sudo apt install -y zsh git gh eza zoxide fzf bat fd-find tldr keychain fastfetch hyperfine podman podman-compose build-essential openjdk-25-jdk
+git clone https://github.com/th1agopaes/dotfiles.git ~/dev/dotfiles
 ```
 
-**2. Instalações manuais** (seguir a documentação oficial de cada um)
+> ℹ️ O caminho `~/dev/dotfiles` é obrigatório: o `.zshrc` (módulos) e o `.gitconfig` (tema do delta) apontam para ele.
 
-| Ferramenta | Instalação |
-|---|---|
-| Oh My Zsh | [ohmyz.sh/#install](https://ohmyz.sh/#install) |
-| Powerlevel10k | [github.com/romkatv/powerlevel10k#oh-my-zsh](https://github.com/romkatv/powerlevel10k#oh-my-zsh) |
-| zsh-autosuggestions | [Instalação com Oh My Zsh](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md#oh-my-zsh) |
-| zsh-syntax-highlighting | [Instalação com Oh My Zsh](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md#oh-my-zsh) |
-| mise | `curl -fsSL https://mise.run \| sh` ([guia](https://mise.jdx.dev/getting-started)) |
-| uv | [docs.astral.sh/uv/getting-started/installation](https://docs.astral.sh/uv/getting-started/installation/) |
-| Rust | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh -s -- --no-modify-path` ([guia](https://rust-lang.org/tools/install)) |
-| Chave SSH no GitHub | [docs.github.com/pt/authentication/connecting-to-github-with-ssh](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh) |
-
-**3. Clonar e criar os links simbólicos**
+**2. Rodar o instalador**
 
 ```bash
-git clone git@github.com:th1agopaes/dotfiles.git ~/dev/dotfiles
-
-mkdir -p ~/.config/git ~/.config/mise ~/.claude
-ln -sf  ~/dev/dotfiles/zsh/.zshrc           ~/.zshrc
-ln -sf  ~/dev/dotfiles/zsh/.p10k.zsh        ~/.p10k.zsh
-ln -sf  ~/dev/dotfiles/git/.gitconfig       ~/.gitconfig
-ln -sf  ~/dev/dotfiles/git/allowed_signers  ~/.config/git/allowed_signers
-ln -sf  ~/dev/dotfiles/git/.gitignore_global ~/.gitignore_global
-ln -sfn ~/dev/dotfiles/fastfetch            ~/.config/fastfetch
-ln -sf  ~/dev/dotfiles/claude/CLAUDE.md     ~/.claude/CLAUDE.md
-ln -sf  ~/dev/dotfiles/mise/config.toml     ~/.config/mise/config.toml
-
-chsh -s "$(which zsh)"   # define o Zsh como shell padrão
-mise install             # instala as versões listadas no config.toml (Node 26 e delta)
+~/dev/dotfiles/scripts/instalar.sh --simular   # opcional: mostra o que vai fazer, sem mudar nada
+~/dev/dotfiles/scripts/instalar.sh
 ```
 
-> ⚠️ O `ln -sf` **substitui** arquivos existentes. Em uma máquina nova, faça backup antes. Se `~/.config/fastfetch` já existir como pasta comum, mova-a para outro lugar antes de criar o link.
+O [`instalar.sh`](scripts/instalar.sh) é **idempotente** (pode rodar quantas vezes quiser; o que já está pronto é pulado) e é testado do zero num Ubuntu 26.04 limpo pelo workflow [Instalação](.github/workflows/instalacao.yml) a cada mudança e todo mês.
 
-> ℹ️ O `.gitconfig` usa o `delta` para exibir diffs. Rode o `mise install` logo depois dos links; sem o delta, comandos como `git diff` não mostram nada.
+| Etapa | O que faz | Fonte oficial |
+|---|---|---|
+| Pacotes | `apt`: zsh, eza, zoxide, fzf, bat, fd, tealdeer, keychain, hyperfine, Podman, build-essential, OpenJDK 25… | [packages.ubuntu.com](https://packages.ubuntu.com/) |
+| GitHub CLI | Repositório oficial, com as impressões digitais da chave conferidas | [cli/cli: instalação no Linux](https://github.com/cli/cli/blob/trunk/docs/install_linux.md) |
+| fastfetch | PPA oficial do projeto | [fastfetch: instalação](https://github.com/fastfetch-cli/fastfetch#installation) |
+| Links | Cria os links simbólicos; arquivos que já existiam vão para `~/.dotfiles-backup/<data>/` | — |
+| Oh My Zsh | Instalador oficial com `--unattended --keep-zshrc` + Powerlevel10k e os 2 plugins | [ohmyz.sh](https://ohmyz.sh/#install) · [Powerlevel10k](https://github.com/romkatv/powerlevel10k#oh-my-zsh) |
+| Versões | mise (+ `mise install`: Node e delta), uv e Rust, **sem** mexer nos arquivos do shell | [mise](https://mise.jdx.dev/installing-mise.html) · [uv](https://docs.astral.sh/uv/reference/installer/) · [rustup](https://rust-lang.org/tools/install) |
+| Shell | Zsh como shell padrão e páginas do `tldr` | — |
 
-> ℹ️ Os módulos do Zsh são carregados direto de `~/dev/dotfiles/zsh/`, por isso o repositório precisa ser clonado nesse caminho.
+**3. Passos pessoais** (ficam manuais por segurança; o script lembra no final)
+
+1. Chave SSH: restaurar de um backup seguro ou criar uma nova e [cadastrar no GitHub](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh) (autenticação e assinatura). Chave nova? Atualize o `git/allowed_signers`.
+2. `gh auth login`
+3. Trocar o remoto para SSH: `git -C ~/dev/dotfiles remote set-url origin git@github.com:th1agopaes/dotfiles.git`
 
 **4. Lado Windows**
 
@@ -349,7 +338,7 @@ Cada fase só é marcada como concluída quando todos os itens dela estiverem fe
 - [x] CI no GitHub Actions: ShellCheck, sintaxe do Zsh e Gitleaks a cada push + Dependabot para as actions
 - [x] Git moderno: configurações recomendadas, aliases e diffs com delta (tema Catppuccin)
 - [x] `.zshrc` organizado em módulos (ambiente, aliases, funções e integrações), com o CI conferindo cada um
-- [ ] `scripts/instalar.sh`: um comando recria o ambiente
+- [x] `scripts/instalar.sh`: um comando recria o lado Linux (idempotente, com `--simular` e testado no CI)
 - [ ] Perfis do VS Code completos e exportados + lista de apps do winget
 
 ### 🔜 Próximos passos
