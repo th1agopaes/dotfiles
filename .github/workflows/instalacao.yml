@@ -1,0 +1,74 @@
+name: Instalação
+
+# Testa o scripts/instalar.sh do zero, num Ubuntu 26.04 limpo:
+# quando o script (ou o que ele instala) muda, todo mês e sob demanda.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/instalar.sh"
+      - "zsh/**"
+      - "git/**"
+      - "mise/**"
+      - "fastfetch/**"
+      - ".github/workflows/instalacao.yml"
+  pull_request:
+    paths:
+      - "scripts/instalar.sh"
+      - "zsh/**"
+      - "git/**"
+      - "mise/**"
+      - "fastfetch/**"
+      - ".github/workflows/instalacao.yml"
+  schedule:
+    # dia 1º às 13:17 UTC (09:17 em Cuiabá): avisa se algum instalador externo mudou
+    - cron: "17 13 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  do-zero:
+    name: Do zero no Ubuntu 26.04
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    timeout-minutes: 30
+    steps:
+      - name: Preparar uma "máquina nova" (usuário comum com sudo, como no WSL)
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y git sudo curl ca-certificates
+          useradd --create-home --shell /bin/bash haru
+          echo 'haru ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/haru
+          chmod 440 /etc/sudoers.d/haru
+
+      - uses: actions/checkout@v7
+
+      - name: Colocar o repositório em ~/dev/dotfiles
+        run: |
+          install -d -o haru -g haru /home/haru/dev
+          cp -r "$GITHUB_WORKSPACE" /home/haru/dev/dotfiles
+          chown -R haru:haru /home/haru/dev/dotfiles
+
+      - name: instalar.sh (1ª vez)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: sudo -u haru -H env GITHUB_TOKEN="$GITHUB_TOKEN" /home/haru/dev/dotfiles/scripts/instalar.sh
+
+      - name: instalar.sh (2ª vez, para provar a idempotência)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: sudo -u haru -H env GITHUB_TOKEN="$GITHUB_TOKEN" /home/haru/dev/dotfiles/scripts/instalar.sh
+
+      - name: Conferir o resultado
+        run: |
+          # o .zshrc carrega sem erro (código de saída 0)
+          sudo -u haru -H zsh -i -c exit
+          # as ferramentas instaladas respondem
+          for cmd in ".local/bin/mise which node" ".local/bin/mise which delta" ".local/bin/uv --version" ".cargo/bin/rustc --version"; do
+            sudo -u haru -H sh -c "cd && ./$cmd"
+          done
+          gh --version && fastfetch --version
+          # o zsh virou o shell padrão
+          test "$(getent passwd haru | cut -d: -f7)" = "$(command -v zsh)"
