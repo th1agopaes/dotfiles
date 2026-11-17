@@ -224,6 +224,14 @@ else
   feito "Rust instalado"
 fi
 
+# rust-src: código-fonte da biblioteca padrão, usado pelo rust-analyzer (perfil Rust do VS Code)
+if "$HOME/.cargo/bin/rustup" component list --installed 2>/dev/null | grep -qx 'rust-src'; then
+  ok "rust-src já instalado"
+else
+  executar "$HOME/.cargo/bin/rustup" component add rust-src
+  feito "rust-src instalado"
+fi
+
 # ---------- 5. Shell padrão e últimos ajustes ----------
 etapa "Shell padrão e últimos ajustes"
 ZSH_BIN="$(command -v zsh || echo /usr/bin/zsh)"
