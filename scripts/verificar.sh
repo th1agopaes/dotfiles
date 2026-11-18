@@ -91,7 +91,21 @@ secao "Git e repositório"
 [[ "$(git config --global commit.gpgsign)" == "true" ]] && ok "commits assinados por padrão" || erro "commit.gpgsign não está ativo"
 [[ "$(git config --global gpg.format)" == "ssh" ]] && ok "assinatura via chave SSH" || aviso "gpg.format não é ssh"
 assinatura="$(git -C "$REPO" log -1 --format=%G? 2>/dev/null)"
-[[ "$assinatura" == "G" ]] && ok "último commit com assinatura válida" || erro "último commit sem assinatura válida (%G? = ${assinatura:-?})"
+committer="$(git -C "$REPO" log -1 --format=%ce 2>/dev/null)"
+if [[ "$assinatura" == "G" ]]; then
+  ok "último commit com assinatura válida"
+elif [[ "$committer" == "noreply@github.com" ]]; then
+  # Squash merge de PR: o GitHub assina com a chave dele, que o Git local não conhece (%G? = E).
+  # Quem confirma a assinatura é a API do GitHub (o selo "Verified" do site).
+  verificado="$(cd "$REPO" && gh api "repos/{owner}/{repo}/commits/$(git rev-parse HEAD)" --jq .commit.verification.verified 2>/dev/null)"
+  if [[ "$verificado" == "true" ]]; then
+    ok "último commit é o merge de um PR, assinado pelo GitHub (Verified)"
+  else
+    aviso "último commit é do GitHub, mas não deu para confirmar o selo Verified (sem internet ou gh sem login?)"
+  fi
+else
+  erro "último commit sem assinatura válida (%G? = ${assinatura:-?})"
+fi
 if [[ -z "$(git -C "$REPO" status --porcelain)" ]]; then ok "repositório sem alterações pendentes"; else aviso "há alterações não commitadas no dotfiles"; fi
 pendentes="$(git -C "$REPO" log --oneline '@{u}..' 2>/dev/null | wc -l)"
 (( pendentes == 0 )) && ok "nenhum commit esperando push" || aviso "$pendentes commit(s) esperando push"
@@ -149,6 +163,10 @@ secao "Projetos em ~/dev (tudo salvo no GitHub?)"
 while IFS= read -r gitdir; do
   repo="${gitdir%/.git}"
   nome="${repo#"$HOME"/}"
+  if [[ "$nome" == dev/sandbox/* ]]; then
+    echo "  ℹ $nome: sandbox (descartável), fica fora da conferência"
+    continue
+  fi
   if ! git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
     erro "$nome: pasta .git incompleta ou corrompida (não é um repositório válido)"
     continue
